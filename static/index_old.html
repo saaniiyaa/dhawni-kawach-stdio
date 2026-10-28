@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DHWANI-KAVACH Live Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --navy:#0f1b3d; --card:#1c2c58; --teal:#00c2a8; --amber:#ffc24d; --red:#ff6b6b; --grey:#9aa5bf; }
+  * { box-sizing:border-box; margin:0; font-family:'Segoe UI',Arial,sans-serif; }
+  body { background:var(--navy); color:#e8edf8; min-height:100vh; padding:20px; }
+  h1 { font-size:24px; letter-spacing:1px; } h1 span { color:var(--teal); }
+  .sub { color:var(--grey); font-size:12px; margin-bottom:14px; }
+  .grid { display:grid; grid-template-columns:350px 1fr; gap:16px; max-width:1150px; }
+  .card { background:var(--card); border-radius:12px; padding:16px; }
+  button { padding:12px; font-size:14px; font-weight:700; border:none; border-radius:10px; cursor:pointer; background:var(--teal); color:#06251f; width:100%; margin-top:8px; }
+  button.ghost { background:transparent; color:var(--grey); border:1px solid var(--grey); }
+  button.stop { background:var(--red); color:#2a0505; }
+  #status { font-size:12px; color:var(--grey); min-height:16px; margin-top:6px; }
+  #incoming { max-width:430px; margin:0 auto; text-align:center; display:none; }
+  .ring { width:110px; height:110px; border-radius:50%; background:#123; border:3px solid var(--teal);
+          margin:18px auto; display:flex; align-items:center; justify-content:center; font-size:48px;
+          animation: ringpulse 1.4s infinite; }
+  @keyframes ringpulse { 0%{box-shadow:0 0 0 0 rgba(0,194,168,.5);} 70%{box-shadow:0 0 0 26px rgba(0,194,168,0);} }
+  .caller { font-size:22px; font-weight:800; }
+  .ctx { text-align:left; background:#0a1226; border-radius:10px; padding:12px; margin:12px 0; font-size:13px; }
+  .ctx li { margin:6px 0 6px 16px; color:#cdd6ea; }
+  .ctx .warn { color:var(--amber); } .ctx .bad { color:var(--red); } .ctx .ok { color:var(--teal); }
+  select, input[type=text] { width:100%; padding:10px; border-radius:8px; border:1px solid var(--grey);
+          background:#0a1226; color:#e8edf8; font-size:14px; margin-top:4px; }
+  #incall { display:none; }
+  .tier { font-size:30px; font-weight:800; padding:14px; border-radius:12px; text-align:center; margin-bottom:12px; }
+  .SAFE,.INSUFFICIENT_AUDIO { background:#123; color:var(--teal); border:2px solid var(--teal); }
+  .SUSPICIOUS { background:#33270a; color:var(--amber); border:2px solid var(--amber); }
+  .HIGH_RISK { background:#3a1111; color:var(--red); border:2px solid var(--red); animation:flash .9s infinite; }
+  @keyframes flash { 50%{opacity:.7;} }
+  .meter { height:13px; background:#0a1226; border-radius:8px; overflow:hidden; margin:6px 0 4px; }
+  .meter>div { height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--amber),var(--red)); transition:width .4s; }
+  .lbl { display:flex; justify-content:space-between; font-size:11px; color:var(--grey); }
+  .action { font-size:13px; line-height:1.7; }
+  .action b { color:var(--teal); } .warn .action b { color:var(--amber); } .hold .action b { color:var(--red); }
+  canvas { width:100%; height:180px; background:#0a1226; border-radius:10px; }
+  .radar { margin-top:10px; background:#0a1226; border-radius:10px; padding:10px; font-size:12px; }
+  .radar .rscore { font-size:20px; font-weight:800; }
+  .LOW { color:var(--teal); } .MEDIUM { color:var(--amber); } .HIGH { color:var(--red); }
+  .transcript { color:var(--grey); font-style:italic; margin-top:4px; min-height:15px; }
+  .foot { margin-top:10px; font-size:10px; color:var(--grey); }
+  label.chk { font-size:12px; color:var(--grey); display:block; margin-top:8px; }
+</style>
+</head>
+<body>
+  <h1>DHWANI<span>-</span>KAVACH <span style="font-size:14px;font-weight:400">live call shield</span></h1>
+  <div class="sub">Simulated call &mdash; all analysis on this machine only. Nothing is uploaded.</div>
+
+  <div id="incoming" class="card">
+    <div class="ring">&#128222;</div>
+    <div class="caller" id="cname">Unknown number</div>
+    <div style="color:var(--grey);font-size:13px" id="cnum">+91-98XXXXXXXX</div>
+    <ul class="ctx" id="ctxlist"></ul>
+    <label>Caller claims to be:
+      <select id="claim">
+        <option value="">(nobody / unknown)</option>
+        <option value="bank">Bank official</option>
+        <option value="police">Police / CBI officer</option>
+        <option value="family">Family member (voiceprint check)</option>
+      </select>
+    </label>
+    <input type="text" id="fakename" placeholder="if family: type the enrolled name (e.g. Papa)" style="margin-top:6px">
+    <button onclick="answer()">&#9742; Answer (start monitoring)</button>
+    <div id="status"></div>
+    <button class="ghost" onclick="location.reload()">Reset demo</button>
+  </div>
+
+  <div id="incall" class="grid">
+    <div class="card" id="leftcard">
+      <div class="tier INSUFFICIENT_AUDIO" id="tier">LISTENING</div>
+      <div class="lbl"><span>machine-voice score (fake=1)</span><span id="pwin">0.00</span></div>
+      <div class="meter"><div id="bar1"></div></div>
+      <div class="lbl"><span>call evidence (accumulated)</span><span id="pcall">0.00</span></div>
+      <div class="meter"><div id="bar2"></div></div>
+      <button id="start" onclick="startMic()">&#127908; Connect call audio (mic)</button>
+      <button id="stop" class="stop" onclick="stopMic()" style="display:none">&#9209; End call</button>
+      <div style="font-size:12px;color:var(--grey);margin-top:10px">
+        &#128172; <b style="color:var(--teal)">Citizen flow:</b> check a voice note (as shared from WhatsApp):
+        <input type="file" id="vnfile" accept=".wav,.mp3,.webm,.ogg,.m4a"
+               onchange="checkVoiceNote(this)" style="color:var(--grey);font-size:11px;margin-top:4px">
+      </div>
+      <label class="chk"><input type="checkbox" id="mute" onchange="toggleMute()"> warning tone muted</label>
+      <button class="ghost" onclick="location.reload()">New call (reset)</button>
+      <div id="status2" class="foot"></div>
+    </div>
+    <div class="card" id="rightcard">
+      <div class="action" id="actionbox">
+        <b>ACTION:</b> <span id="action">OBSERVE</span><br>
+        <b>SCREEN:</b> <span id="uitext">Listening&hellip;</span><br>
+        <b>STEP-UP:</b> <span id="stepup">&mdash;</span><br>
+        <b>Sensitive action (e.g. money transfer):</b> <span id="allow">allowed</span>
+      </div>
+      <canvas id="cv" width="640" height="180"></canvas>
+      <div class="radar">
+        <b>SCAM-SCRIPT RADAR</b> &nbsp; <span class="rscore LOW" id="rscore">0</span>
+        <span id="rlevel" class="LOW">LOW</span>
+        <div id="rcats" style="color:var(--grey)"></div>
+        <div id="radvice" style="margin-top:4px"></div>
+        <div class="transcript" id="tr">&#127908; live transcript appears here (Chrome)&hellip;</div>
+      </div>
+      <div class="foot" id="vpresult"></div>
+    </div>
+  </div>
+
+<script>
+let rec=null, stream=null, scores=[], claimedFamily=null, warnTimer=null, muted=false;
+const $=id=>document.getElementById(id);
+
+let actx=null;
+function beep(){
+  if(muted) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type='sine'; o.frequency.value=620;
+    g.gain.setValueAtTime(0.0001,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12,actx.currentTime+0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+0.7);
+    o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime+0.75);
+  }catch(e){}
+}
+function warnOn(){ if(!warnTimer){ beep(); warnTimer=setInterval(beep,2000); } }
+function warnOff(){ clearInterval(warnTimer); warnTimer=null; }
+function toggleMute(){ muted=$('mute').checked; }
+
+async function loadContext(){
+  const number = "+91-140-987654";
+  $('cnum').textContent = number;
+  const r = await fetch('/api/context',{method:'POST',headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({number:number, claims_bank:true})});
+  const j = await r.json();
+  const ul=$('ctxlist');
+  j.notes.forEach(n=>{
+    const li=document.createElement('li');
+    li.textContent=n;
+    li.className = j.level==='danger' ? 'bad' : (j.level==='warning' ? 'warn' : 'ok');
+    ul.appendChild(li);
+  });
+}
+$('incoming').style.display='block';
+loadContext();
+
+function answer(){
+  $('incoming').style.display='none';
+  $('incall').style.display='grid';
+  claimedFamily = $('claim').value==='family' ? $('fakename').value.trim() : null;
+  if($('claim').value==='bank' || $('claim').value==='police'){
+    $('vpresult').innerHTML='<b style="color:var(--amber)">NOTE:</b> caller claims an institution '+
+      '- institutions do not call from personal numbers; verified-list mismatch already flagged.';
+  }
+  startMic();
+}
+
+async function sendBlob(blob){
+  const r = await fetch('/api/score',{method:'POST',headers:{'Content-Type':blob.type||'audio/webm'},body:blob});
+  const j = await r.json();
+  if(j.error){ return; }
+  scores.push(j.window_p); if(scores.length>60) scores.shift();
+  $('pwin').textContent=j.window_p.toFixed(2);
+  $('pcall').textContent=j.call_p.toFixed(2);
+  $('bar1').style.width=(j.window_p*100)+'%';
+  $('bar2').style.width=(j.call_p*100)+'%';
+  setTier(j.tier,j);
+  $('status2').textContent='windows: '+j.n_windows+' | voiced: '+j.voiced_seconds.toFixed(1)+
+                           's | model: '+j.model;
+  draw();
+}
+
+function setTier(t,pol){
+  const el=$('tier');
+  el.className='tier '+t;
+  el.textContent=t.replace('INSUFFICIENT_AUDIO','LISTENING').replace('_',' ');
+  $('action').textContent=pol.action;
+  $('uitext').textContent=pol.ui;
+  $('stepup').textContent=pol.step_up||'\u2014';
+  $('allow').textContent=pol.allow_sensitive?'ALLOWED':'ON HOLD';
+  $('rightcard').className='card '+(t==='HIGH_RISK'?'hold':(t==='SUSPICIOUS'?'warn':''));
+  if(t==='HIGH_RISK') warnOn(); else warnOff();
+}
+
+function draw(){
+  const cv=$('cv'),ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  const n=Math.max(scores.length,20),w=cv.width/n;
+  for(let i=0;i<scores.length;i++){
+    const h=scores[i]*cv.height;
+    ctx.fillStyle=scores[i]>0.8?'#ff6b6b':(scores[i]>0.5?'#ffc24d':'#00c2a8');
+    ctx.fillRect(i*w+1,cv.height-h,Math.max(w-2,3),h);
+  }
+}
+
+async function startMic(){
+  try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(e){ $('status2').textContent='Mic blocked ('+e.message+') - demo needs the mic.'; return; }
+  rec=new MediaRecorder(stream);
+  rec.ondataavailable=ev=>{ if(ev.data&&ev.data.size>0) sendBlob(ev.data); };
+  rec.start(4000);
+  $('start').style.display='none'; $('stop').style.display='block';
+  $('status2').textContent='CALL LIVE - engine scoring every 4 seconds';
+  startTranscript();
+}
+function stopMic(){
+  if(rec)rec.stop(); if(stream)stream.getTracks().forEach(t=>t.stop());
+  if(recog){try{recog.stop();}catch(e){}}
+  $('start').style.display='block'; $('stop').style.display='none';
+  warnOff();
+  $('status2').textContent='Call ended.';
+}
+
+async function checkVoiceNote(inp){
+  if(!inp.files.length) return;
+  const f = inp.files[0];
+  const ctype = f.name.endsWith('.wav') ? 'audio/wav'
+              : (f.name.endsWith('.mp3') ? 'audio/mpeg'
+              : (f.name.endsWith('.m4a') ? 'audio/mp4' : 'audio/webm'));
+  $('status2').textContent='checking voice note (simulating share from WhatsApp)...';
+  const r = await fetch('/api/score',{method:'POST',headers:{'Content-Type':ctype},body:f});
+  const j = await r.json();
+  if(j.error){ $('status2').textContent='voice note: '+j.error; return; }
+  $('status2').textContent='VOICE NOTE checked - score '+j.window_p.toFixed(2)+
+     ' | advisory: '+(j.tier==='HIGH_RISK'?'do not act - call the person on their saved number':
+     (j.tier==='SUSPICIOUS'?'verify with a code word before acting':'no synthetic indicators'));
+}
+
+let recog=null, finalText='';
+function startTranscript(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ $('tr').textContent='(live speech-to-text needs Chrome; radar still works on scored windows)'; return; }
+  recog=new SR();
+  recog.continuous=true; recog.interimResults=true; recog.lang='en-IN';
+  recog.onresult=async ev=>{
+    let interim='';
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      if(ev.results[i].isFinal) finalText+=ev.results[i][0].transcript+' ';
+      else interim+=ev.results[i][0].transcript;
+    }
+    $('tr').textContent='"'+(finalText+interim).slice(-160)+'"';
+    const r=await fetch('/api/radar',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text:finalText+interim})});
+    const j=await r.json();
+    $('rscore').textContent=j.score;
+    $('rscore').className='rscore '+j.level;
+    $('rlevel').textContent=j.level; $('rlevel').className=j.level;
+    $('rcats').textContent=j.categories.length?('patterns: '+Object.values(j.matched).flat().join(', ').slice(0,90)):'';
+    $('radvice').innerHTML=j.advisory?('<span style="color:var(--amber)">&#9888; '+j.advisory+'</span>'):'';
+  };
+  try{ recog.start(); }catch(e){}
+}
+</script>
+</body>
+</html>

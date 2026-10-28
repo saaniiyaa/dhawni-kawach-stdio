@@ -1,0 +1,16 @@
+.venv/
+data/
+results/*
+!results/cnn_v1/
+__pycache__/
+dist/
+build/
+node_modules/
+*.zip
+local.properties
+index_wrong_file_backup.html
+nulecho
+.vscode/
+static/index_internal_trophy.html
+# ── Secrets — NEVER commit .env ──────────────────────────────────────────────
+.env

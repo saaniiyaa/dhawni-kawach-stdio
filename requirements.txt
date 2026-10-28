@@ -1,0 +1,18 @@
+numpy
+scipy
+soundfile
+librosa
+pandas
+pyyaml
+tqdm
+matplotlib
+scikit-learn
+pytest
+imageio-ffmpeg
+torch
+torchaudio
+flask
+gunicorn
+# ── TinyFish threat-verification integration ──────────────────────────────────
+tinyfish
+python-dotenv

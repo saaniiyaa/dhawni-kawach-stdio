@@ -1,0 +1,27 @@
+{
+  "version": "cnn_v1 (no augmentation, capped subsets)",
+  "n_train": 4000,
+  "n_dev": 800,
+  "n_eval": 1200,
+  "eer_dev_seen": 0.0125,
+  "eer_eval_unseen": 0.085,
+  "acc_dev": 0.9875,
+  "acc_eval": 0.9108,
+  "tpr_at_fpr1pct_dev": 0.985,
+  "eer_eval_per_attack": {
+    "A07": 0.005,
+    "A08": 0.055,
+    "A09": 0.0,
+    "A10": 0.0183,
+    "A11": 0.0117,
+    "A12": 0.0033,
+    "A13": 0.02,
+    "A14": 0.005,
+    "A15": 0.0617,
+    "A16": 0.0567,
+    "A17": 0.4233,
+    "A18": 0.0417,
+    "A19": 0.035
+  },
+  "note": "subset caps: train<=4000 dev<=800 eval<=1200; full runs later"
+}
