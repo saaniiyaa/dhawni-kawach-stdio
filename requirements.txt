@@ -1,7 +1,8 @@
-numpy
+# Core Audio & Machine Learning Stack
+numpy>=1.24.0
 scipy
-soundfile
-librosa
+soundfile>=0.12.1
+librosa>=0.10.1
 pandas
 pyyaml
 tqdm
@@ -11,11 +12,20 @@ pytest
 imageio-ffmpeg
 torch
 torchaudio
+onnxruntime>=1.16.0
+
+# Web Frameworks & Microservices (Flask Demo + FastAPI Edge Shield)
 flask
 gunicorn
-# ── TinyFish threat-verification integration ──────────────────────────────────
+fastapi>=0.104.1
+uvicorn>=0.24.0
+pydantic-settings>=2.0.3
+websockets>=12.0
+python-multipart>=0.0.6
+httpx>=0.25.1
+requests>=2.28.0
+
+# External Threat Feeds & Voice AI Integration
 tinyfish
-python-dotenv
-# ── ElevenLabs Conversational AI, Flash v2.5 & STT ────────────────────────────
+python-dotenv>=1.0.0
 elevenlabs>=1.0.0
-requests
