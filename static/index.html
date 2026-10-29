@@ -2464,7 +2464,11 @@
 
         // Auto-reconnecting WebSocket
         function connectWebSocket() {
-            ws = new WebSocket("ws://localhost:8000/ws/v1/shield/ws");
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsHost = window.location.host;
+            const wsUrl = `${wsProtocol}//${wsHost}/ws/v1/shield/ws`;
+            ws = new WebSocket(wsUrl);
+            ws.binaryType = 'arraybuffer';
 
             ws.onopen = () => {
                 logToConsole("✅ Secure WebSocket established. STIR/SHAKEN identity confirmed.");
@@ -2490,13 +2494,13 @@
             };
 
             ws.onerror = () => {
-                logToConsole("❌ WebSocket Protocol Error.");
-                if (ws) ws.close();
+                logToConsole("⚠️ WebSocket connection updating...");
             };
 
             ws.onmessage = async (event) => {
-                if (event.data instanceof Blob) {
-                    new Audio(URL.createObjectURL(event.data)).play();
+                if (event.data instanceof Blob || event.data instanceof ArrayBuffer) {
+                    const audioBlob = event.data instanceof Blob ? event.data : new Blob([event.data], { type: "audio/wav" });
+                    new Audio(URL.createObjectURL(audioBlob)).play();
                     stopCall();
                     statusEl.innerText = detectedLanguage === "hi" ? "स्थिति: कॉल इंटरसेप्ट किया गया" : "Status: CALL INTERCEPTED";
                     statusEl.style.color = "var(--accent-rose)";
