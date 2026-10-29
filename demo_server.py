@@ -423,4 +423,10 @@ if __name__ == "__main__":
     print("DHWANI-KAVACH demo v2. Open in your browser (Chrome recommended):")
     print("       http://127.0.0.1:8000")
     print(f"phones on the same Wi-Fi:  http://{_lan_ip}:8000")
-    app.run(host="0.0.0.0", port=8000, debug=False)
+    try:
+        import uvicorn
+        print("[OK] Launching ASGI Uvicorn server for native WebSockets & Edge NPU stream.")
+        uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=False)
+    except Exception as _uv_err:
+        print(f"[WARN] Uvicorn fallback to WSGI: {_uv_err}")
+        app.run(host="0.0.0.0", port=8000, debug=False)
