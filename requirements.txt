@@ -16,3 +16,6 @@ gunicorn
 # ── TinyFish threat-verification integration ──────────────────────────────────
 tinyfish
 python-dotenv
+# ── ElevenLabs Conversational AI, Flash v2.5 & STT ────────────────────────────
+elevenlabs>=1.0.0
+requests
