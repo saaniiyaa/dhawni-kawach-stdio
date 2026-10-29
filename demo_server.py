@@ -145,6 +145,16 @@ def decode_to_wav(raw_bytes, suffix):
 
 @app.route("/")
 def index():
+    return send_file("static/studio.html") if os.path.exists("static/studio.html") else send_file("static/index.html")
+
+
+@app.route("/studio")
+def studio():
+    return send_file("static/studio.html")
+
+
+@app.route("/telephony")
+def telephony():
     return send_file("static/index.html")
 
 
