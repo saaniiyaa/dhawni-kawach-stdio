@@ -1,12 +1,31 @@
-fastapi==0.104.1
-uvicorn==0.24.0
-pydantic-settings==2.0.3
-websockets==12.0
-python-multipart==0.0.6
-elevenlabs==2.75.0
-python-dotenv==1.0.0
-numpy==1.26.2
-librosa==0.10.1
-onnxruntime==1.16.3
-soundfile==0.12.1
-httpx==0.25.1
+# Core Audio & Machine Learning Stack
+numpy>=1.24.0
+scipy
+soundfile>=0.12.1
+librosa>=0.10.1
+pandas
+pyyaml
+tqdm
+matplotlib
+scikit-learn
+pytest
+imageio-ffmpeg
+torch
+torchaudio
+onnxruntime>=1.16.0
+
+# Web Frameworks & Microservices (Flask Demo + FastAPI Edge Shield)
+flask
+gunicorn
+fastapi>=0.104.1
+uvicorn>=0.24.0
+pydantic-settings>=2.0.3
+websockets>=12.0
+python-multipart>=0.0.6
+httpx>=0.25.1
+requests>=2.28.0
+
+# External Threat Feeds & Voice AI Integration
+tinyfish
+python-dotenv>=1.0.0
+elevenlabs>=1.0.0

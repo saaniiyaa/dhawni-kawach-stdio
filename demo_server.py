@@ -113,6 +113,15 @@ except Exception as _tf_err:
     _TINYFISH_HOOKED = False
     print(f"[WARN] TinyFish threat-verifier not loaded: {_tf_err}")
 
+# ── ElevenLabs Studio Service (ConvAI, Flash v2.5, Scribe STT) ────────────────
+try:
+    from services.elevenlabs_service import elevenlabs_svc
+    _ELEVENLABS_HOOKED = True
+    print("[OK] ElevenLabs Studio service loaded: ConvAI, Flash v2.5, Scribe STT enabled")
+except Exception as _el_err:
+    _ELEVENLABS_HOOKED = False
+    print(f"[WARN] ElevenLabs Studio service not loaded: {_el_err}")
+
 
 def score_audio(y):
     piece = fix_length(np.asarray(y, dtype=np.float32), int(SECONDS * SR))
@@ -136,6 +145,16 @@ def decode_to_wav(raw_bytes, suffix):
 
 @app.route("/")
 def index():
+    return send_file("static/studio.html") if os.path.exists("static/studio.html") else send_file("static/index.html")
+
+
+@app.route("/studio")
+def studio():
+    return send_file("static/studio.html")
+
+
+@app.route("/telephony")
+def telephony():
     return send_file("static/index.html")
 
 
@@ -299,6 +318,96 @@ def api_score():
         return jsonify(resp)
     except Exception as e:
         return jsonify({"error": str(e)})
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# ── DHWANI KAVACH STUDIO :: ElevenLabs Backend Endpoints ──────────────────────
+# ═════════════════════════════════════════════════════════════════════════════
+
+@app.route("/api/studio/permissions", methods=["GET"])
+def studio_permissions():
+    """Live diagnostics on ElevenLabs API key and capabilities."""
+    if not _ELEVENLABS_HOOKED:
+        return jsonify({"ok": False, "error": "ElevenLabs service not loaded"}), 503
+    try:
+        res = elevenlabs_svc.probe_permissions()
+        res["ok"] = True
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/studio/agent/create", methods=["POST"])
+def studio_agent_create():
+    """
+    No-code ConvAI Agent creation endpoint.
+    PPT Slide 3 & 4: User prompt -> ElevenLabs /v1/convai/agents/create.
+    """
+    if not _ELEVENLABS_HOOKED:
+        return jsonify({"ok": False, "error": "ElevenLabs service not loaded"}), 503
+    try:
+        data = request.get_json(silent=True) or {}
+        name = data.get("name", "Dhwani Kavach Assistant").strip()
+        prompt = data.get("prompt", "You are a customer support agent.").strip()
+        voice_id = data.get("voice_id")
+        first_message = data.get("first_message")
+        language = data.get("language", "en")
+        model_id = data.get("model_id")
+
+        if not prompt:
+            return jsonify({"ok": False, "error": "Agent prompt cannot be empty"}), 400
+
+        res = elevenlabs_svc.create_convai_agent(
+            name=name,
+            prompt=prompt,
+            voice_id=voice_id,
+            first_message=first_message,
+            language=language,
+            model_id=model_id
+        )
+        res["ok"] = res.get("success", False)
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/studio/agent/signed_url", methods=["GET"])
+def studio_agent_signed_url():
+    """Returns signed WebSocket/WebRTC URL to converse with an agent."""
+    if not _ELEVENLABS_HOOKED:
+        return jsonify({"ok": False, "error": "ElevenLabs service not loaded"}), 503
+    try:
+        agent_id = request.args.get("agent_id", "").strip()
+        if not agent_id:
+            return jsonify({"ok": False, "error": "agent_id query parameter required"}), 400
+        res = elevenlabs_svc.get_signed_conversation_url(agent_id=agent_id)
+        res["ok"] = res.get("success", False)
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/studio/intercept_alert", methods=["POST"])
+def studio_intercept_alert():
+    """
+    Ultra-low latency security voice warning injection via Flash v2.5.
+    PPT Slide 4, 5 & 7: Instant ElevenLabs voice warning + call termination.
+    """
+    if not _ELEVENLABS_HOOKED:
+        return jsonify({"ok": False, "error": "ElevenLabs service not loaded"}), 503
+    try:
+        data = request.get_json(silent=True) or {}
+        text = data.get(
+            "text",
+            "Security Alert: Dhwani Kavach Shield has detected a synthetic voice clone and scam pattern. This call is placed on hold."
+        )
+        voice_id = data.get("voice_id")
+
+        res = elevenlabs_svc.generate_flash_intercept_alert(text=text, voice_id=voice_id)
+        res["ok"] = res.get("success", False)
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 if __name__ == "__main__":
