@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <meta name="theme-color" content="#060813">
-    <meta name="description" content="Dhwani Kavach Studio — Production-Grade Voice AI Agent Studio with Real-Time Acoustic & Semantic Vishing Shield">
-    <title>Dhwani Kavach Studio — No-Code Voice AI Defense Platform</title>
+    <meta name="theme-color" content="#050811">
+    <meta name="color-scheme" content="dark">
+    <meta name="description" content="Dhwani Kavach Studio — Enterprise Voice AI Agent Builder & Real-Time Deepfake Acoustic Interceptor">
+    <title>Dhwani Kavach Studio — Enterprise Voice AI Defense Platform</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,7 +14,7 @@
     <!-- Google Fonts & Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 
     <!-- ElevenLabs ConvAI Official Web Widget Script -->
@@ -25,12 +26,13 @@
             theme: {
                 extend: {
                     colors: {
-                        obsidian: '#060813',
-                        surface: {
-                            50: '#131b31',
-                            100: '#0e1528',
-                            200: 'rgba(11, 16, 32, 0.78)',
-                            300: 'rgba(6, 9, 20, 0.88)'
+                        obsidian: {
+                            DEFAULT: '#050811',
+                            50: '#141c33',
+                            100: '#0e1529',
+                            200: '#0a0f1f',
+                            300: '#070b17',
+                            900: '#050811'
                         },
                         cyber: {
                             cyan: '#00F0FF',
@@ -45,12 +47,10 @@
                         mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
                     },
                     boxShadow: {
-                        'glass-sm': '0 4px 16px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.06)',
-                        'glass-md': '0 12px 32px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
-                        'glass-lg': '0 24px 48px -12px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
-                        'glow-cyan': '0 0 25px rgba(0, 240, 255, 0.22)',
-                        'glow-emerald': '0 0 25px rgba(16, 185, 129, 0.25)',
-                        'glow-crimson': '0 0 35px rgba(239, 68, 68, 0.4)'
+                        'specular': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1), inset 0 0 16px 0 rgba(0, 240, 255, 0.02), 0 20px 40px -15px rgba(0, 0, 0, 0.7)',
+                        'glow-cyan': '0 0 28px -4px rgba(0, 240, 255, 0.35)',
+                        'glow-emerald': '0 0 28px -4px rgba(16, 185, 129, 0.35)',
+                        'glow-crimson': '0 0 35px -2px rgba(239, 68, 68, 0.45)'
                     }
                 }
             }
@@ -59,31 +59,33 @@
 
     <style>
         :root {
-            --bg-page: #060813;
-            --bg-card: rgba(12, 17, 34, 0.78);
-            --bg-card-sub: rgba(6, 9, 20, 0.90);
-            --border-card: rgba(0, 240, 255, 0.16);
-            --border-card-hover: rgba(0, 240, 255, 0.45);
+            --bg-page: #050811;
+            --bg-card: rgba(10, 15, 31, 0.76);
+            --bg-card-sub: rgba(6, 9, 20, 0.88);
+            --border-card: rgba(255, 255, 255, 0.08);
+            --border-card-hover: rgba(0, 240, 255, 0.38);
             --accent-cyan: #00F0FF;
             --accent-emerald: #10B981;
             --accent-crimson: #EF4444;
             --accent-amber: #F59E0B;
             --text-primary: #F8FAFC;
             --text-muted: #94A3B8;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Fluid background with ambient dynamic gradients */
+        /* Ambient Cyber-Dark Mesh Background */
         body {
             background-color: var(--bg-page);
             background-image: 
-                radial-gradient(ellipse 90% 50% at 50% -15%, rgba(0, 240, 255, 0.08), transparent 75%),
-                radial-gradient(ellipse 60% 40% at 95% 85%, rgba(16, 185, 129, 0.04), transparent 70%),
-                radial-gradient(ellipse 50% 30% at 5% 45%, rgba(239, 68, 68, 0.03), transparent 60%),
-                #060813;
+                radial-gradient(ellipse 80% 50% at 50% -12%, rgba(0, 240, 255, 0.09), transparent 72%),
+                radial-gradient(ellipse 60% 45% at 100% 90%, rgba(16, 185, 129, 0.05), transparent 70%),
+                radial-gradient(ellipse 50% 35% at 0% 45%, rgba(239, 68, 68, 0.035), transparent 60%),
+                #050811;
             background-attachment: fixed;
             color: var(--text-primary);
             font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
             min-height: 100vh;
+            line-height: 1.6;
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -96,19 +98,34 @@
             line-height: 1;
         }
 
-        /* Glassmorphism Surface Base */
-        .glass-panel {
+        /* Glassmorphism Surface Base with Dual-Border Specular Edge */
+        .glass-card {
             background: var(--bg-card);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-card);
+            box-shadow: 
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.09),
+                0 20px 45px -15px rgba(0, 0, 0, 0.65);
         }
 
-        .glass-panel-sub {
+        .glass-card-sub {
             background: var(--bg-card-sub);
             border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Tactile spring transition */
+        .spring-transition {
+            transition: all 200ms var(--ease-spring);
+        }
+
+        /* CRT Terminal Scanlines */
+        .terminal-scanlines {
+            background: 
+                linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.28) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 3px, 6px 100%;
         }
 
         /* Custom Scrollbar */
@@ -117,82 +134,72 @@
             height: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(6, 9, 20, 0.6);
+            background: rgba(5, 8, 17, 0.6);
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 240, 255, 0.25);
+            background: rgba(0, 240, 255, 0.22);
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent-cyan);
         }
 
-        /* Scanline subtlety for activity terminal */
-        .scanlines {
-            background: linear-gradient(
-                rgba(18, 24, 38, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            ), linear-gradient(
-                90deg,
-                rgba(255, 0, 0, 0.02),
-                rgba(0, 255, 0, 0.01),
-                rgba(0, 0, 255, 0.02)
-            );
-            background-size: 100% 3px, 6px 100%;
+        /* Breathing Pulse Glow Animation */
+        @keyframes beacon-glow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.18); opacity: 0.45; }
         }
-
-        /* Safe transitions & spring-like ease */
-        .transition-spring {
-            transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
+        .animate-beacon {
+            animation: beacon-glow 2.4s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen antialiased selection:bg-[var(--accent-cyan)] selection:text-black pb-16 md:pb-0">
+<body class="flex flex-col min-h-screen antialiased selection:bg-[var(--accent-cyan)] selection:text-black pb-20 md:pb-0 overflow-x-hidden">
 
-    <!-- ── 1. HEADER & TOP BAR ──────────────────────────────────────────────── -->
-    <header class="w-full bg-[#070b16]/90 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-40 px-3.5 sm:px-6 lg:px-8 py-3.5 transition-all shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+    <!-- ── 1. PRIMARY TOP NAVIGATION HEADER ─────────────────────────────────── -->
+    <header class="w-full bg-[#050811]/92 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-40 px-3.5 sm:px-6 lg:px-8 py-3.5 shadow-[0_4px_28px_rgba(0,0,0,0.5)]">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
             
-            <!-- Brand Logo & Identity -->
-            <div class="flex items-center gap-3">
-                <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/10 border border-cyan-400/30 flex items-center justify-center text-[var(--accent-cyan)] shadow-glass-sm group">
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-blue-600/10 border border-cyan-400/35 flex items-center justify-center text-[var(--accent-cyan)] shadow-sm shrink-0 group">
                     <span class="material-symbols-outlined text-2xl transition-transform duration-300 group-hover:scale-110">shield_with_heart</span>
-                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--accent-emerald)] shadow-[0_0_8px_#10B981]"></span>
+                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--accent-emerald)] shadow-[0_0_8px_#10B981] animate-beacon"></span>
                 </div>
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2">
-                        <span class="font-mono font-extrabold text-lg sm:text-xl tracking-wider text-white uppercase">DHWANI KAVACH</span>
+                <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-mono font-extrabold text-lg sm:text-xl tracking-wider text-white uppercase truncate">DHWANI KAVACH</span>
                         <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-black bg-[var(--accent-cyan)] text-[#060913] uppercase tracking-wider shadow-sm">STUDIO</span>
                     </div>
-                    <span class="text-[11px] font-mono text-[var(--text-muted)] font-medium hidden sm:inline tracking-tight">
+                    <span class="text-[11px] font-mono text-[var(--text-muted)] font-medium hidden sm:inline tracking-tight truncate">
                         Secured Voice AI Infrastructure · Real-Time Vishing Defense
                     </span>
                 </div>
             </div>
 
             <!-- Desktop Segmented Tab Switcher (Slide 1) -->
-            <nav class="hidden md:flex items-center bg-[#070a14]/90 p-1.5 rounded-2xl border border-white/[0.09] font-mono text-xs font-bold shadow-inner" aria-label="Studio Navigation">
-                <button class="nav-tab px-4 py-2 rounded-xl transition-spring flex items-center gap-2 bg-[var(--accent-cyan)] text-[#060913] font-extrabold shadow-[0_0_15px_rgba(0,240,255,0.35)] cursor-pointer" data-tab="builder">
+            <nav class="hidden md:flex items-center bg-[#070b17]/95 p-1.5 rounded-2xl border border-white/[0.09] font-mono text-xs font-bold shadow-inner" aria-label="Studio Navigation">
+                <button class="nav-tab min-h-[40px] px-4 py-2 rounded-xl spring-transition flex items-center gap-2 bg-[var(--accent-cyan)] text-[#060913] font-extrabold shadow-[0_0_15px_rgba(0,240,255,0.35)] cursor-pointer active:scale-[0.98]" data-tab="builder">
                     <span class="material-symbols-outlined text-[18px]">smart_toy</span>
                     <span>AGENT BUILDER</span>
                 </button>
-                <button class="nav-tab px-4 py-2 rounded-xl transition-spring flex items-center gap-2 text-[var(--text-muted)] hover:text-white cursor-pointer" data-tab="shield">
+                <button class="nav-tab min-h-[40px] px-4 py-2 rounded-xl spring-transition flex items-center gap-2 text-[var(--text-muted)] hover:text-white cursor-pointer active:scale-[0.98]" data-tab="shield">
                     <span class="material-symbols-outlined text-[18px]">verified_user</span>
                     <span>SECURITY SHIELD</span>
                 </button>
-                <button class="nav-tab px-4 py-2 rounded-xl transition-spring flex items-center gap-2 text-[var(--text-muted)] hover:text-white cursor-pointer" data-tab="arch">
+                <button class="nav-tab min-h-[40px] px-4 py-2 rounded-xl spring-transition flex items-center gap-2 text-[var(--text-muted)] hover:text-white cursor-pointer active:scale-[0.98]" data-tab="arch">
                     <span class="material-symbols-outlined text-[18px]">hub</span>
                     <span>ARCHITECTURE</span>
                 </button>
             </nav>
 
-            <!-- Right Cloud Status & Telephony Link -->
-            <div class="flex items-center gap-2.5">
-                <div id="cloudStatusPill" class="px-3 py-1.5 rounded-full text-[11px] font-mono font-bold bg-[var(--accent-emerald)]/15 border border-[var(--accent-emerald)]/40 text-[var(--accent-emerald)] flex items-center gap-2 shadow-sm">
+            <!-- Right Telemetry & Status Badges -->
+            <div class="flex items-center gap-2.5 shrink-0">
+                <div id="cloudStatusPill" class="min-h-[36px] px-3 py-1.5 rounded-full text-[11px] font-mono font-bold bg-[var(--accent-emerald)]/15 border border-[var(--accent-emerald)]/40 text-[var(--accent-emerald)] flex items-center gap-2 shadow-sm">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_8px_#10B981]"></span>
-                    <span id="cloudStatusText" class="truncate max-w-[170px] sm:max-w-none">ELEVENLABS CONVAI: ACTIVE</span>
+                    <span id="cloudStatusText" class="truncate max-w-[160px] sm:max-w-none">ELEVENLABS CONVAI: ACTIVE</span>
                 </div>
-                <a href="/telephony" class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/10 hover:border-cyan-400/40 text-xs font-mono text-[var(--text-muted)] hover:text-cyan-300 transition-spring bg-white/[0.02]">
+                <a href="/telephony" class="hidden lg:flex items-center gap-1.5 min-h-[36px] px-3.5 py-1.5 rounded-xl border border-white/10 hover:border-cyan-400/40 text-xs font-mono text-[var(--text-muted)] hover:text-cyan-300 spring-transition bg-white/[0.02]">
                     <span class="material-symbols-outlined text-[16px]">phone_iphone</span>
                     <span>Telephony</span>
                 </a>
@@ -200,7 +207,7 @@
         </div>
     </header>
 
-    <!-- ── 2. MAIN CONTENT AREA ─────────────────────────────────────────────── -->
+    <!-- ── 2. MAIN APPLICATION WORKSPACE ────────────────────────────────────── -->
     <main class="flex-1 w-full max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-7 flex flex-col gap-6">
 
         <!-- ═══════════════════════════════════════════════════════════════════════ -->
@@ -208,9 +215,9 @@
         <!-- ═══════════════════════════════════════════════════════════════════════ -->
         <section id="tab-builder" class="tab-content flex flex-col gap-6" aria-labelledby="builderHeadline">
             
-            <!-- Headline Hero Banner -->
-            <div class="glass-panel p-5 sm:p-7 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
-                <div class="absolute -right-16 -top-16 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <!-- Headline Hero Banner with Ambient Glow -->
+            <div class="glass-card p-5 sm:p-7 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div class="flex flex-col gap-2 z-10">
                     <div class="flex items-center gap-2 flex-wrap">
@@ -223,50 +230,50 @@
                         Prompt-to-Agent Studio Builder
                     </h2>
                     <p class="text-xs sm:text-sm text-[var(--text-muted)] max-w-2xl leading-relaxed">
-                        Design, provision, and deploy low-latency conversational voice AI agents in seconds. 
+                        Design, provision, and deploy conversational voice AI agents in seconds. 
                         Every deployed agent is fortified by Dhwani-Kavach real-time acoustic vocoder inspection.
                     </p>
                 </div>
 
                 <div class="flex items-center gap-2.5 flex-wrap z-10 self-stretch md:self-auto justify-start md:justify-end">
-                    <div class="px-3 py-2 rounded-xl glass-panel-sub text-xs font-mono text-[var(--accent-cyan)] flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-cyan)]"></span>
+                    <div class="px-3.5 py-2 rounded-xl glass-card-sub text-xs font-mono text-[var(--accent-cyan)] flex items-center gap-2 border border-cyan-400/20">
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-cyan)] shadow-[0_0_6px_#00F0FF]"></span>
                         <span>Latency: ~75ms</span>
                     </div>
-                    <div class="px-3 py-2 rounded-xl glass-panel-sub text-xs font-mono text-[var(--accent-emerald)] flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-emerald)]"></span>
+                    <div class="px-3.5 py-2 rounded-xl glass-card-sub text-xs font-mono text-[var(--accent-emerald)] flex items-center gap-2 border border-emerald-500/20">
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] shadow-[0_0_6px_#10B981]"></span>
                         <span>Shield: Active</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Two-Column Workbench: Config (7 cols) & Station (5 cols) -->
+            <!-- Two-Column Workbench: Configurator (7 cols) & Live Station (5 cols) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                 <!-- Left Column: Agent Configurator -->
-                <div class="lg:col-span-7 glass-panel p-5 sm:p-7 rounded-3xl flex flex-col gap-5">
+                <div class="lg:col-span-7 glass-card p-5 sm:p-7 rounded-3xl flex flex-col gap-5">
                     <div class="flex items-center justify-between border-b border-white/[0.08] pb-4">
                         <div class="flex items-center gap-2.5">
                             <span class="material-symbols-outlined text-[var(--accent-cyan)] text-xl">tune</span>
                             <h3 class="font-mono font-bold text-sm sm:text-base text-white uppercase tracking-wider">Agent Specifications</h3>
                         </div>
-                        <span class="text-xs font-mono text-cyan-400/80 bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-800/40">No-Code</span>
+                        <span class="text-xs font-mono text-cyan-400/90 bg-cyan-950/40 px-2.5 py-0.5 rounded-full border border-cyan-800/40">No-Code</span>
                     </div>
 
                     <!-- Quick Preset Templates -->
                     <div class="flex flex-col gap-2">
                         <label class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Production Templates</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                            <button type="button" class="preset-btn p-2.5 rounded-xl glass-panel-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white transition-spring text-center cursor-pointer active:scale-95 flex items-center justify-center gap-1.5" data-preset="sbi">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="sbi">
                                 <span>🏦</span><span>Bank Desk</span>
                             </button>
-                            <button type="button" class="preset-btn p-2.5 rounded-xl glass-panel-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white transition-spring text-center cursor-pointer active:scale-95 flex items-center justify-center gap-1.5" data-preset="emergency">
+                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="emergency">
                                 <span>🚑</span><span>112 SOS</span>
                             </button>
-                            <button type="button" class="preset-btn p-2.5 rounded-xl glass-panel-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white transition-spring text-center cursor-pointer active:scale-95 flex items-center justify-center gap-1.5" data-preset="senior">
+                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="senior">
                                 <span>👴</span><span>Elder Assist</span>
                             </button>
-                            <button type="button" class="preset-btn p-2.5 rounded-xl glass-panel-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white transition-spring text-center cursor-pointer active:scale-95 flex items-center justify-center gap-1.5" data-preset="ecommerce">
+                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="ecommerce">
                                 <span>📦</span><span>Logistics</span>
                             </button>
                         </div>
@@ -275,29 +282,29 @@
                     <!-- Agent Name -->
                     <div class="flex flex-col gap-1.5">
                         <label for="agentName" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Agent Identifier / Name</label>
-                        <input id="agentName" type="text" class="w-full px-4 py-2.5 rounded-xl glass-panel-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none transition-spring" value="SBI Customer Care Assistant" placeholder="e.g. SBI Banking Assistant">
+                        <input id="agentName" type="text" class="w-full min-h-[48px] px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none spring-transition" value="SBI Customer Care Assistant" placeholder="e.g. SBI Banking Assistant">
                     </div>
 
-                    <!-- System Prompt & Guardrails -->
+                    <!-- System Prompt & Security Guardrails -->
                     <div class="flex flex-col gap-1.5">
                         <div class="flex items-center justify-between">
                             <label for="agentPrompt" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">System Prompt & Security Guardrails</label>
-                            <span class="text-[10px] font-mono text-[var(--accent-cyan)]">Full Conversational Freedom</span>
+                            <span class="text-[10px] font-mono text-[var(--accent-cyan)]">Natural Voice Flow</span>
                         </div>
-                        <textarea id="agentPrompt" rows="4" class="w-full px-4 py-3 rounded-xl glass-panel-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm leading-relaxed outline-none transition-spring resize-none" placeholder="Describe the persona, instructions, and anti-fraud boundaries for your agent...">You are a professional, polite customer care assistant for State Bank of India (SBI). Greet the caller warmly. Help them check account balance, verify recent transaction status, and report lost cards. For security, inform the caller that SBI officials will NEVER request ATM PIN, CVV, or OTP passwords over the phone.</textarea>
+                        <textarea id="agentPrompt" rows="4" class="w-full px-4 py-3 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm leading-relaxed outline-none spring-transition resize-none" placeholder="Describe the personality, role, and guardrails of your voice AI agent...">You are a professional, polite customer care assistant for State Bank of India (SBI). Greet the caller warmly. Help them check account balance, verify recent transaction status, and report lost cards. For security, inform the caller that SBI officials will NEVER request ATM PIN, CVV, or OTP passwords over the phone.</textarea>
                     </div>
 
                     <!-- Initial Greeting Message -->
                     <div class="flex flex-col gap-1.5">
                         <label for="agentFirstMessage" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">First Message / Greeting Hook</label>
-                        <input id="agentFirstMessage" type="text" class="w-full px-4 py-2.5 rounded-xl glass-panel-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none transition-spring" value="Namaste! Welcome to State Bank of India customer care. How may I assist you with your banking today?">
+                        <input id="agentFirstMessage" type="text" class="w-full min-h-[48px] px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none spring-transition" value="Namaste! Welcome to State Bank of India customer care. How may I assist you with your banking today?">
                     </div>
 
-                    <!-- Voice & Language Options -->
+                    <!-- Voice Model & Language Configuration -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1.5">
                             <label for="agentVoice" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">ElevenLabs Voice Model</label>
-                            <select id="agentVoice" class="w-full px-3.5 py-2.5 rounded-xl glass-panel-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none transition-spring cursor-pointer">
+                            <select id="agentVoice" class="w-full min-h-[48px] px-3.5 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none spring-transition cursor-pointer">
                                 <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Calm / Friendly - Female)</option>
                                 <option value="pNInz6obpgDQGcFmaJgB">Adam (Professional - Male)</option>
                                 <option value="EXAVITQu4vr4xnSDxMaL">Bella (Clear / Empathetic)</option>
@@ -306,15 +313,15 @@
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label for="agentLanguage" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Language & Dialect</label>
-                            <select id="agentLanguage" class="w-full px-3.5 py-2.5 rounded-xl glass-panel-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none transition-spring cursor-pointer">
+                            <select id="agentLanguage" class="w-full min-h-[48px] px-3.5 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none spring-transition cursor-pointer">
                                 <option value="en">English (Global / Indian Accent)</option>
                                 <option value="hi">Hindi (हिन्दी / Indic Dialect)</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Deploy Button -->
-                    <button id="btnDeployAgent" type="button" class="mt-2 w-full min-h-[48px] py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#060913] font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider transition-spring shadow-[0_0_25px_rgba(0,240,255,0.35)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]">
+                    <!-- Deploy Button with Tactile Active State -->
+                    <button id="btnDeployAgent" type="button" class="mt-2 w-full min-h-[48px] py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#060913] font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider spring-transition shadow-[0_0_25px_rgba(0,240,255,0.35)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]">
                         <span class="material-symbols-outlined text-xl">rocket_launch</span>
                         <span>Deploy via /convai/agents</span>
                     </button>
@@ -324,7 +331,7 @@
                 <div class="lg:col-span-5 flex flex-col gap-6">
                     
                     <!-- Deployed Station Card -->
-                    <div class="glass-panel p-5 sm:p-6 rounded-3xl flex flex-col gap-4">
+                    <div class="glass-card p-5 sm:p-6 rounded-3xl flex flex-col gap-4">
                         <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
                             <div class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[var(--accent-emerald)] text-xl">podcasts</span>
@@ -337,7 +344,7 @@
 
                         <!-- Empty State -->
                         <div id="agentStationEmpty" class="flex flex-col items-center justify-center p-8 text-center gap-3">
-                            <div class="w-14 h-14 rounded-2xl glass-panel-sub border border-white/10 flex items-center justify-center text-[var(--text-muted)]">
+                            <div class="w-14 h-14 rounded-2xl glass-card-sub border border-white/10 flex items-center justify-center text-[var(--text-muted)]">
                                 <span class="material-symbols-outlined text-3xl">smart_toy</span>
                             </div>
                             <div class="font-mono font-bold text-sm text-[var(--text-primary)]">No Active Agent Deployed</div>
@@ -348,7 +355,7 @@
 
                         <!-- Active State (Populated via JS) -->
                         <div id="agentStationActive" class="hidden flex flex-col gap-4">
-                            <div class="p-4 rounded-2xl glass-panel-sub flex flex-col gap-2">
+                            <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
                                 <div class="flex items-center justify-between text-xs font-mono">
                                     <span class="text-[var(--text-muted)]">Name:</span>
                                     <span id="stationAgentName" class="font-bold text-white truncate max-w-[200px]">SBI Assistant</span>
@@ -372,10 +379,10 @@
                                 <!-- Populated dynamically by app_studio.js -->
                             </div>
 
-                            <!-- Embed Snippet -->
+                            <!-- Embed Component Snippet -->
                             <div class="flex flex-col gap-1">
                                 <span class="text-[10px] font-mono text-[var(--text-muted)]">Embed Component Snippet:</span>
-                                <div id="stationEmbedSnippet" class="p-2.5 rounded-xl glass-panel-sub text-[11px] font-mono text-[var(--accent-cyan)] overflow-x-auto select-all break-all">
+                                <div id="stationEmbedSnippet" class="p-2.5 rounded-xl glass-card-sub text-[11px] font-mono text-[var(--accent-cyan)] overflow-x-auto select-all break-all">
                                     &lt;elevenlabs-convai agent-id="..."&gt;&lt;/elevenlabs-convai&gt;
                                 </div>
                             </div>
@@ -383,18 +390,18 @@
                     </div>
 
                     <!-- Live Activity Log Terminal -->
-                    <div class="glass-panel p-5 sm:p-6 rounded-3xl flex flex-col gap-3">
+                    <div class="glass-card p-5 sm:p-6 rounded-3xl flex flex-col gap-3">
                         <div class="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
                             <div class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[var(--accent-cyan)] text-lg">terminal</span>
                                 <h4 class="font-mono font-bold text-xs text-white uppercase tracking-wider">Live Activity Terminal</h4>
                             </div>
                             <span class="text-[10px] font-mono text-[var(--accent-emerald)] flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-emerald)] animate-pulse"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_6px_#10B981]"></span>
                                 <span>Telemetry Active</span>
                             </span>
                         </div>
-                        <div id="activityTerminal" class="h-48 p-3 rounded-2xl glass-panel-sub scanlines overflow-y-auto flex flex-col gap-1.5 font-mono text-[11px] border border-white/[0.08]">
+                        <div id="activityTerminal" class="h-48 p-3 rounded-2xl glass-card-sub terminal-scanlines overflow-y-auto flex flex-col gap-1.5 font-mono text-[11px] border border-white/[0.08]">
                             <div class="text-[var(--text-muted)]">[System Ready] Dhwani Kavach Studio initialized. Awaiting user commands.</div>
                         </div>
                     </div>
@@ -410,7 +417,7 @@
         <section id="tab-shield" class="tab-content hidden flex flex-col gap-6" aria-labelledby="shieldHeadline">
             
             <!-- Judge Evaluation Controls Bar -->
-            <div class="glass-panel p-5 sm:p-6 rounded-3xl flex flex-wrap items-center justify-between gap-4">
+            <div class="glass-card p-5 sm:p-6 rounded-3xl flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)]">
                         <span class="material-symbols-outlined text-2xl">science</span>
@@ -422,15 +429,15 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2.5">
-                    <button id="btnTestReal" type="button" class="min-h-[44px] px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center gap-2 transition-spring cursor-pointer active:scale-95 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse"></span>
+                    <button id="btnTestReal" type="button" class="min-h-[48px] px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_8px_#10B981]"></span>
                         <span>🟢 Real Voice (Safe)</span>
                     </button>
-                    <button id="btnTestClone" type="button" class="min-h-[44px] px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-mono font-bold text-xs flex items-center gap-2 transition-spring cursor-pointer active:scale-95 shadow-glow-crimson">
-                        <span class="w-2 h-2 rounded-full bg-[var(--accent-crimson)] animate-ping"></span>
+                    <button id="btnTestClone" type="button" class="min-h-[48px] px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-[0_0_20px_rgba(239,68,68,0.35)]">
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-crimson)] animate-ping shadow-[0_0_8px_#EF4444]"></span>
                         <span>🔴 AI Clone Attack</span>
                     </button>
-                    <button id="btnResetShield" type="button" class="min-h-[44px] px-3.5 py-2.5 rounded-xl glass-panel-sub border border-white/10 hover:border-cyan-400/40 text-[var(--text-muted)] hover:text-white font-mono text-xs transition-spring cursor-pointer active:scale-95">
+                    <button id="btnResetShield" type="button" class="min-h-[48px] px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 hover:border-cyan-400/40 text-[var(--text-muted)] hover:text-white font-mono text-xs spring-transition cursor-pointer active:scale-[0.98]">
                         🔄 Reset
                     </button>
                 </div>
@@ -439,8 +446,8 @@
             <!-- Call Shield Telemetry Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- Left Column: Caller Ingestion & Waveform (6 cols) -->
-                <div class="lg:col-span-6 glass-panel p-5 sm:p-7 rounded-3xl flex flex-col gap-5">
+                <!-- Left Column: Caller Ingestion & Waveform -->
+                <div class="lg:col-span-6 glass-card p-5 sm:p-7 rounded-3xl flex flex-col gap-5">
                     <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
                         <div class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-[var(--accent-cyan)] text-lg">call</span>
@@ -452,22 +459,22 @@
                     </div>
 
                     <!-- Caller Profile Card -->
-                    <div class="p-6 rounded-2xl glass-panel-sub flex flex-col items-center text-center gap-3 relative overflow-hidden">
-                        <div class="w-20 h-20 rounded-full bg-[#070b16] border-2 border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-glass-md relative">
+                    <div class="p-6 rounded-2xl glass-card-sub flex flex-col items-center text-center gap-3 relative overflow-hidden">
+                        <div class="w-20 h-20 rounded-full bg-[#050811] border-2 border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular relative">
                             <span class="material-symbols-outlined text-4xl">person</span>
-                            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[var(--accent-cyan)] border-2 border-[#060813]"></span>
+                            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[var(--accent-cyan)] border-2 border-[#050811] shadow-[0_0_8px_#00F0FF]"></span>
                         </div>
                         <div>
                             <div class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">UNKNOWN CALLER</div>
                             <div class="text-xl font-mono font-extrabold text-white mt-0.5 tracking-tight">+91 98765 43210</div>
                             <div class="text-xs font-mono text-[var(--accent-cyan)] mt-1 flex items-center justify-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-cyan)] animate-pulse"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-cyan)] animate-pulse shadow-[0_0_6px_#00F0FF]"></span>
                                 <span>Telecom Audio Ingest Active</span>
                             </div>
                         </div>
 
                         <!-- Real-Time Waveform Canvas -->
-                        <div class="w-full mt-2 p-3.5 rounded-2xl bg-[#04060d] border border-white/10 flex flex-col gap-2">
+                        <div class="w-full mt-2 p-3.5 rounded-2xl bg-[#03060c] border border-white/10 flex flex-col gap-2">
                             <div class="flex items-center justify-between text-[10px] font-mono text-[var(--text-muted)]">
                                 <span>Acoustic Waveform Analysis</span>
                                 <span class="text-[var(--accent-cyan)]">16 kHz / Mono</span>
@@ -477,7 +484,7 @@
                     </div>
 
                     <!-- Composite Decision Banner -->
-                    <div id="decisionStrip" class="p-4 rounded-2xl glass-panel-sub text-[var(--text-muted)] font-mono flex items-center justify-between border border-white/10">
+                    <div id="decisionStrip" class="p-4 rounded-2xl glass-card-sub text-[var(--text-muted)] font-mono flex items-center justify-between border border-white/10">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-2xl text-[var(--accent-cyan)]">shield</span>
                             <div>
@@ -489,8 +496,8 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Forensic XAI Vitals & Evidence (6 cols) -->
-                <div class="lg:col-span-6 glass-panel p-5 sm:p-7 rounded-3xl flex flex-col gap-5">
+                <!-- Right Column: Forensic XAI Vitals & Evidence -->
+                <div class="lg:col-span-6 glass-card p-5 sm:p-7 rounded-3xl flex flex-col gap-5">
                     <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
                         <div class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-[var(--accent-cyan)] text-lg">analytics</span>
@@ -499,14 +506,14 @@
                         <span class="text-xs font-mono text-[var(--accent-cyan)]">MelCNN (236k params)</span>
                     </div>
 
-                    <!-- Primary Metric: Deepfake Probability -->
-                    <div class="p-5 rounded-2xl glass-panel-sub flex flex-col gap-2.5">
+                    <!-- Deepfake Probability Gauge -->
+                    <div class="p-5 rounded-2xl glass-card-sub flex flex-col gap-2.5">
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-xs font-bold text-white uppercase tracking-wider">Deepfake Clone Probability</span>
                             <span id="deepfakeScoreBadge" class="text-base font-mono font-extrabold text-[var(--text-muted)]">0%</span>
                         </div>
-                        <div class="w-full h-3.5 rounded-full bg-[#04060d] overflow-hidden p-0.5 border border-white/10">
-                            <div id="deepfakeProgressBar" class="h-full rounded-full bg-[var(--accent-cyan)] transition-all duration-300" style="width: 0%;"></div>
+                        <div class="w-full h-3.5 rounded-full bg-[#03060c] overflow-hidden p-0.5 border border-white/10">
+                            <div id="deepfakeProgressBar" class="h-full rounded-full bg-[var(--accent-cyan)] transition-all duration-300 shadow-[0_0_10px_#00F0FF]" style="width: 0%;"></div>
                         </div>
                         <div class="flex items-center justify-between text-[10px] font-mono text-[var(--text-muted)] mt-1">
                             <span>0% (Human Speech)</span>
@@ -517,22 +524,22 @@
 
                     <!-- Multi-Model Metric Grid -->
                     <div class="grid grid-cols-2 gap-3 font-mono">
-                        <div class="p-3.5 rounded-2xl glass-panel-sub flex flex-col gap-1">
+                        <div class="p-3.5 rounded-2xl glass-card-sub flex flex-col gap-1">
                             <span class="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Pitch Micro-Jitter</span>
                             <span id="valJitter" class="text-lg font-bold text-white">0.00%</span>
                             <span class="text-[10px] text-[var(--text-muted)]">&lt;0.4% = Neural Vocoder</span>
                         </div>
-                        <div class="p-3.5 rounded-2xl glass-panel-sub flex flex-col gap-1">
+                        <div class="p-3.5 rounded-2xl glass-card-sub flex flex-col gap-1">
                             <span class="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Spectral Flatness</span>
                             <span id="valFlatness" class="text-lg font-bold text-white">0.00</span>
                             <span class="text-[10px] text-[var(--text-muted)]">2.5k - 6.0k Hz Band</span>
                         </div>
-                        <div class="p-3.5 rounded-2xl glass-panel-sub flex flex-col gap-1">
+                        <div class="p-3.5 rounded-2xl glass-card-sub flex flex-col gap-1">
                             <span class="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Scribe STT Scam Score</span>
                             <span id="valScamScore" class="text-lg font-bold text-white">0%</span>
                             <span class="text-[10px] text-[var(--text-muted)]">OTP / Urgent Demands</span>
                         </div>
-                        <div class="p-3.5 rounded-2xl glass-panel-sub flex flex-col gap-1">
+                        <div class="p-3.5 rounded-2xl glass-card-sub flex flex-col gap-1">
                             <span class="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Inference Latency</span>
                             <span class="text-lg font-bold text-[var(--accent-emerald)]">&lt; 75 ms</span>
                             <span class="text-[10px] text-[var(--accent-emerald)]">Flash v2.5 Target</span>
@@ -540,7 +547,7 @@
                     </div>
 
                     <!-- Explainable Defense Principle Card -->
-                    <div class="p-4 rounded-2xl glass-panel-sub text-xs font-mono text-[var(--text-muted)] leading-relaxed border-l-2 border-l-[var(--accent-cyan)]">
+                    <div class="p-4 rounded-2xl glass-card-sub text-xs font-mono text-[var(--text-muted)] leading-relaxed border-l-2 border-l-[var(--accent-cyan)]">
                         <span class="text-[var(--accent-cyan)] font-bold">Multi-Model Defense Architecture:</span>
                         Our Mel-spectrogram CNN analyzes acoustic vocoder artifacts, while ElevenLabs Scribe STT identifies semantic vishing patterns in real time. When risk exceeds 75%, Flash v2.5 instantly cuts in to warn the user.
                     </div>
@@ -554,7 +561,7 @@
         <!-- TAB 3: SYSTEM ARCHITECTURE & IMPACT                                     -->
         <!-- ═══════════════════════════════════════════════════════════════════════ -->
         <section id="tab-arch" class="tab-content hidden flex flex-col gap-6" aria-labelledby="archHeadline">
-            <div class="glass-panel p-5 sm:p-7 rounded-3xl flex flex-col gap-6">
+            <div class="glass-card p-5 sm:p-7 rounded-3xl flex flex-col gap-6">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)]">
                         <span class="material-symbols-outlined text-2xl">account_tree</span>
@@ -565,35 +572,35 @@
                     </div>
                 </div>
 
-                <!-- 6-Stage Interactive Step Flow -->
+                <!-- 6-Stage Flow -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 font-mono text-xs">
-                    <div class="p-4 rounded-2xl glass-panel-sub flex flex-col gap-2 relative">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px]">1</div>
+                    <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">1</div>
                         <div class="font-bold text-white">User Prompt</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">"Create a voice agent for bank assistant"</div>
                     </div>
-                    <div class="p-4 rounded-2xl glass-panel-sub flex flex-col gap-2 relative">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px]">2</div>
+                    <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">2</div>
                         <div class="font-bold text-white">ElevenLabs ConvAI</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">/v1/convai/agents configures voice personality</div>
                     </div>
-                    <div class="p-4 rounded-2xl glass-panel-sub flex flex-col gap-2 relative">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px]">3</div>
+                    <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">3</div>
                         <div class="font-bold text-white">Deploy Agent</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">Live WebRTC/WebSocket endpoint active</div>
                     </div>
-                    <div class="p-4 rounded-2xl glass-panel-sub flex flex-col gap-2 relative">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px]">4</div>
+                    <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">4</div>
                         <div class="font-bold text-white">Live Call Stream</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">1-sec sliding windows + speech VAD</div>
                     </div>
-                    <div class="p-4 rounded-2xl glass-panel-sub flex flex-col gap-2 relative">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px]">5</div>
+                    <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">5</div>
                         <div class="font-bold text-white">Dhwani Shield</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">MelCNN + Scribe STT vishing detector</div>
                     </div>
-                    <div class="p-4 rounded-2xl glass-panel-sub border border-[var(--accent-crimson)]/50 flex flex-col gap-2 relative">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-crimson)] text-white font-black flex items-center justify-center text-[11px]">6</div>
+                    <div class="p-4 rounded-2xl glass-card-sub border border-[var(--accent-crimson)]/50 flex flex-col gap-2">
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-crimson)] text-white font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#EF4444]">6</div>
                         <div class="font-bold text-[var(--accent-crimson)]">INTERCEPT</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">Flash v2.5 voice warning & call hold</div>
                     </div>
@@ -601,7 +608,7 @@
 
                 <!-- Real-World Impact Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                    <div class="p-5 rounded-2xl glass-panel-sub flex flex-col gap-2 font-mono">
+                    <div class="p-5 rounded-2xl glass-card-sub flex flex-col gap-2 font-mono">
                         <div class="flex items-center gap-2 text-[var(--accent-cyan)]">
                             <span class="material-symbols-outlined">account_balance</span>
                             <span class="font-bold text-sm">Financial Protection</span>
@@ -610,7 +617,7 @@
                             Thwarts AI voice-clone impersonation before unauthorized banking transfers occur, targeting India's ₹22,495 Cr fraud vector.
                         </p>
                     </div>
-                    <div class="p-5 rounded-2xl glass-panel-sub flex flex-col gap-2 font-mono">
+                    <div class="p-5 rounded-2xl glass-card-sub flex flex-col gap-2 font-mono">
                         <div class="flex items-center gap-2 text-[var(--accent-emerald)]">
                             <span class="material-symbols-outlined">translate</span>
                             <span class="font-bold text-sm">Indic Language Scale</span>
@@ -619,7 +626,7 @@
                             Engineered for Hindi and Indic regional accents, ensuring national accessibility and protection for non-English speakers.
                         </p>
                     </div>
-                    <div class="p-5 rounded-2xl glass-panel-sub flex flex-col gap-2 font-mono">
+                    <div class="p-5 rounded-2xl glass-card-sub flex flex-col gap-2 font-mono">
                         <div class="flex items-center gap-2 text-white">
                             <span class="material-symbols-outlined text-[var(--accent-cyan)]">memory</span>
                             <span class="font-bold text-sm">CPU-Only Feasibility</span>
@@ -634,26 +641,26 @@
 
     </main>
 
-    <!-- ── 3. MOBILE BOTTOM NAVIGATION (Mobile-First Ergonomics) ─────────────── -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#070b16]/95 backdrop-blur-2xl border-t border-white/10 px-4 py-2 flex items-center justify-around font-mono text-[10px]" aria-label="Mobile Navigation">
-        <button class="nav-tab flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-[var(--accent-cyan)] font-extrabold cursor-pointer active:scale-95" data-tab="builder">
+    <!-- ── 3. MOBILE FLOATING BOTTOM APP BAR (48px Touch Target) ─────────────── -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050811]/95 backdrop-blur-2xl border-t border-white/10 px-4 py-2 flex items-center justify-around font-mono text-[10px]" aria-label="Mobile Navigation">
+        <button class="nav-tab min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--accent-cyan)] font-extrabold cursor-pointer active:scale-95" data-tab="builder">
             <span class="material-symbols-outlined text-xl">smart_toy</span>
             <span>BUILDER</span>
         </button>
-        <button class="nav-tab flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="shield">
+        <button class="nav-tab min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="shield">
             <span class="material-symbols-outlined text-xl">verified_user</span>
             <span>SHIELD</span>
         </button>
-        <button class="nav-tab flex flex-col items-center gap-1 py-1 px-3 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="arch">
+        <button class="nav-tab min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="arch">
             <span class="material-symbols-outlined text-xl">hub</span>
             <span>SYSTEM</span>
         </button>
     </nav>
 
-    <!-- ── 4. AUTOMATED INTERCEPTOR MODAL ───────────────────────────────────── -->
-    <div id="interceptorBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300"></div>
+    <!-- ── 4. AUTOMATED INTERCEPTOR MODAL (Slide 7 Replica) ─────────────────── -->
+    <div id="interceptorBackdrop" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300"></div>
 
-    <div id="interceptorModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[480px] bg-[#0c1122] border-2 border-[var(--accent-crimson)] rounded-3xl shadow-glow-crimson z-50 p-6 hidden opacity-0 scale-95 transition-all duration-300 flex flex-col items-center text-center gap-4">
+    <div id="interceptorModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[480px] bg-[#090e1f] border-2 border-[var(--accent-crimson)] rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.45)] z-50 p-6 sm:p-7 hidden opacity-0 scale-95 transition-all duration-300 flex flex-col items-center text-center gap-4">
         
         <!-- Glowing Shield Warning Beacon -->
         <div class="relative w-20 h-20 rounded-full bg-rose-500/20 border-2 border-[var(--accent-crimson)] flex items-center justify-center text-[var(--accent-crimson)] animate-pulse shadow-lg">
@@ -670,18 +677,18 @@
         </div>
 
         <!-- Flash v2.5 Voice Alert Audio Player Status Strip -->
-        <div id="interceptorAudioStatus" class="w-full py-2.5 px-3.5 rounded-xl glass-panel-sub border border-[var(--accent-crimson)]/40 flex items-center justify-center gap-2 text-xs font-mono text-[var(--text-muted)]">
+        <div id="interceptorAudioStatus" class="w-full min-h-[48px] py-2.5 px-3.5 rounded-xl glass-card-sub border border-[var(--accent-crimson)]/40 flex items-center justify-center gap-2 text-xs font-mono text-[var(--text-muted)]">
             <span class="material-symbols-outlined text-base text-[var(--accent-crimson)] animate-bounce">volume_up</span>
             <span>Synthesizing Flash v2.5 Voice Warning...</span>
         </div>
 
         <!-- Action Buttons -->
         <div class="w-full flex flex-col gap-2.5 pt-2">
-            <button id="btnTerminateCall" type="button" class="w-full min-h-[48px] py-3.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs uppercase tracking-wider transition-spring shadow-[0_0_20px_rgba(239,68,68,0.5)] flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+            <button id="btnTerminateCall" type="button" class="w-full min-h-[48px] py-3.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs uppercase tracking-wider spring-transition shadow-[0_0_20px_rgba(239,68,68,0.5)] flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                 <span class="material-symbols-outlined text-lg">call_end</span>
                 <span>TERMINATE CALL</span>
             </button>
-            <button id="btnVerifyIdentity" type="button" class="w-full min-h-[48px] py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-400 font-mono font-extrabold text-xs uppercase tracking-wider transition-spring flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+            <button id="btnVerifyIdentity" type="button" class="w-full min-h-[48px] py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-400 font-mono font-extrabold text-xs uppercase tracking-wider spring-transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                 <span class="material-symbols-outlined text-lg">verified_user</span>
                 <span>VERIFY IDENTITY</span>
             </button>
