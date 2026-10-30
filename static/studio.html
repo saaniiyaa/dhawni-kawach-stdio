@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <meta name="theme-color" content="#050811">
+    <meta name="theme-color" content="#03060c">
     <meta name="color-scheme" content="dark">
-    <meta name="description" content="Dhwani Kavach Studio — Enterprise Voice AI Agent Builder & Real-Time Deepfake Acoustic Interceptor">
+    <meta name="description" content="Dhwani Kavach Studio — Enterprise-Grade Voice AI Agent Builder & Real-Time Deepfake Acoustic Interceptor">
     <title>Dhwani Kavach Studio — Enterprise Voice AI Defense Platform</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts & Material Symbols -->
+    <!-- Google Fonts: Plus Jakarta Sans (Display), Inter (Body), JetBrains Mono (Telemetry) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -27,12 +27,12 @@
                 extend: {
                     colors: {
                         obsidian: {
-                            DEFAULT: '#050811',
-                            50: '#141c33',
-                            100: '#0e1529',
-                            200: '#0a0f1f',
-                            300: '#070b17',
-                            900: '#050811'
+                            DEFAULT: '#03060c',
+                            50: '#111827',
+                            100: '#0b1120',
+                            200: '#070c18',
+                            300: '#050912',
+                            900: '#03060c'
                         },
                         cyber: {
                             cyan: '#00F0FF',
@@ -44,13 +44,14 @@
                     },
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
                         mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
                     },
                     boxShadow: {
-                        'specular': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1), inset 0 0 16px 0 rgba(0, 240, 255, 0.02), 0 20px 40px -15px rgba(0, 0, 0, 0.7)',
-                        'glow-cyan': '0 0 28px -4px rgba(0, 240, 255, 0.35)',
-                        'glow-emerald': '0 0 28px -4px rgba(16, 185, 129, 0.35)',
-                        'glow-crimson': '0 0 35px -2px rgba(239, 68, 68, 0.45)'
+                        'specular': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 24px 48px -18px rgba(0, 0, 0, 0.75)',
+                        'glow-cyan': '0 0 30px -4px rgba(0, 240, 255, 0.4)',
+                        'glow-emerald': '0 0 30px -4px rgba(16, 185, 129, 0.4)',
+                        'glow-crimson': '0 0 35px -2px rgba(239, 68, 68, 0.5)'
                     }
                 }
             }
@@ -59,11 +60,11 @@
 
     <style>
         :root {
-            --bg-page: #050811;
-            --bg-card: rgba(10, 15, 31, 0.76);
-            --bg-card-sub: rgba(6, 9, 20, 0.88);
-            --border-card: rgba(255, 255, 255, 0.08);
-            --border-card-hover: rgba(0, 240, 255, 0.38);
+            --bg-page: #03060c;
+            --bg-card: rgba(8, 13, 27, 0.76);
+            --bg-card-sub: rgba(4, 7, 16, 0.85);
+            --border-card: rgba(255, 255, 255, 0.09);
+            --border-card-hover: rgba(0, 240, 255, 0.4);
             --accent-cyan: #00F0FF;
             --accent-emerald: #10B981;
             --accent-crimson: #EF4444;
@@ -73,14 +74,14 @@
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Ambient Cyber-Dark Mesh Background */
+        /* Ambient Obsidian Canvas with Multi-Stop Radial Color Bleeds */
         body {
             background-color: var(--bg-page);
             background-image: 
-                radial-gradient(ellipse 80% 50% at 50% -12%, rgba(0, 240, 255, 0.09), transparent 72%),
-                radial-gradient(ellipse 60% 45% at 100% 90%, rgba(16, 185, 129, 0.05), transparent 70%),
-                radial-gradient(ellipse 50% 35% at 0% 45%, rgba(239, 68, 68, 0.035), transparent 60%),
-                #050811;
+                radial-gradient(ellipse 90% 60% at 50% -14%, rgba(0, 240, 255, 0.07), transparent 75%),
+                radial-gradient(ellipse 70% 50% at 100% 85%, rgba(16, 185, 129, 0.04), transparent 72%),
+                radial-gradient(ellipse 60% 40% at 0% 40%, rgba(239, 68, 68, 0.03), transparent 65%),
+                #03060c;
             background-attachment: fixed;
             color: var(--text-primary);
             font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
@@ -98,43 +99,43 @@
             line-height: 1;
         }
 
-        /* Glassmorphism Surface Base with Dual-Border Specular Edge */
+        /* Multi-Layered Specular Glassmorphism */
         .glass-card {
             background: var(--bg-card);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-card);
             box-shadow: 
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.09),
-                0 20px 45px -15px rgba(0, 0, 0, 0.65);
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+                0 24px 48px -18px rgba(0, 0, 0, 0.75);
         }
 
         .glass-card-sub {
             background: var(--bg-card-sub);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
         }
 
-        /* Tactile spring transition */
+        /* Tactile Spring Physics */
         .spring-transition {
-            transition: all 200ms var(--ease-spring);
+            transition: all 250ms var(--ease-spring);
         }
 
         /* CRT Terminal Scanlines */
         .terminal-scanlines {
             background: 
-                linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.28) 50%),
+                linear-gradient(rgba(14, 20, 34, 0) 50%, rgba(0, 0, 0, 0.32) 50%),
                 linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
             background-size: 100% 3px, 6px 100%;
         }
 
-        /* Custom Scrollbar */
+        /* Precision Minimal Scrollbars */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(5, 8, 17, 0.6);
+            background: rgba(3, 6, 12, 0.6);
         }
         ::-webkit-scrollbar-thumb {
             background: rgba(0, 240, 255, 0.22);
@@ -144,32 +145,39 @@
             background: var(--accent-cyan);
         }
 
-        /* Breathing Pulse Glow Animation */
+        /* Living Ambient Status Beacon */
         @keyframes beacon-glow {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.18); opacity: 0.45; }
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.22); opacity: 0.4; }
         }
         .animate-beacon {
-            animation: beacon-glow 2.4s ease-in-out infinite;
+            animation: beacon-glow 2.5s ease-in-out infinite;
+        }
+
+        /* Touch target minimum utility */
+        .touch-target {
+            min-height: 48px;
+            min-width: 48px;
+            touch-action: manipulation;
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen antialiased selection:bg-[var(--accent-cyan)] selection:text-black pb-20 md:pb-0 overflow-x-hidden">
+<body class="flex flex-col min-h-screen antialiased selection:bg-[var(--accent-cyan)] selection:text-black pb-24 md:pb-0 overflow-x-hidden">
 
     <!-- ── 1. PRIMARY TOP NAVIGATION HEADER ─────────────────────────────────── -->
-    <header class="w-full bg-[#050811]/92 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-40 px-3.5 sm:px-6 lg:px-8 py-3.5 shadow-[0_4px_28px_rgba(0,0,0,0.5)]">
+    <header class="w-full bg-[#03060c]/90 backdrop-blur-2xl border-b border-white/[0.08] sticky top-0 z-40 px-3.5 sm:px-6 lg:px-8 py-3.5 shadow-[0_4px_30px_rgba(0,0,0,0.6)]">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
             
-            <!-- Logo & Title -->
+            <!-- Logo & Brand Hierarchy -->
             <div class="flex items-center gap-3 min-w-0">
-                <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-blue-600/10 border border-cyan-400/35 flex items-center justify-center text-[var(--accent-cyan)] shadow-sm shrink-0 group">
+                <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-blue-600/10 border border-cyan-400/35 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular shrink-0 group">
                     <span class="material-symbols-outlined text-2xl transition-transform duration-300 group-hover:scale-110">shield_with_heart</span>
                     <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--accent-emerald)] shadow-[0_0_8px_#10B981] animate-beacon"></span>
                 </div>
                 <div class="flex flex-col min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="font-mono font-extrabold text-lg sm:text-xl tracking-wider text-white uppercase truncate">DHWANI KAVACH</span>
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-black bg-[var(--accent-cyan)] text-[#060913] uppercase tracking-wider shadow-sm">STUDIO</span>
+                        <span class="font-mono font-extrabold text-lg sm:text-xl tracking-tight text-white uppercase truncate">DHWANI KAVACH</span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-black bg-[var(--accent-cyan)] text-[#03060c] uppercase tracking-wider shadow-sm">STUDIO</span>
                     </div>
                     <span class="text-[11px] font-mono text-[var(--text-muted)] font-medium hidden sm:inline tracking-tight truncate">
                         Secured Voice AI Infrastructure · Real-Time Vishing Defense
@@ -177,8 +185,8 @@
                 </div>
             </div>
 
-            <!-- Desktop Segmented Tab Switcher (Slide 1) -->
-            <nav class="hidden md:flex items-center bg-[#070b17]/95 p-1.5 rounded-2xl border border-white/[0.09] font-mono text-xs font-bold shadow-inner" aria-label="Studio Navigation">
+            <!-- Desktop Segmented Tab Switcher (40px Height, Keyboard Accessible) -->
+            <nav class="hidden md:flex items-center bg-[#050912]/95 p-1.5 rounded-2xl border border-white/[0.09] font-mono text-xs font-bold shadow-inner" aria-label="Studio Navigation">
                 <button class="nav-tab min-h-[40px] px-4 py-2 rounded-xl spring-transition flex items-center gap-2 bg-[var(--accent-cyan)] text-[#060913] font-extrabold shadow-[0_0_15px_rgba(0,240,255,0.35)] cursor-pointer active:scale-[0.98]" data-tab="builder">
                     <span class="material-symbols-outlined text-[18px]">smart_toy</span>
                     <span>AGENT BUILDER</span>
@@ -195,11 +203,11 @@
 
             <!-- Right Telemetry & Status Badges -->
             <div class="flex items-center gap-2.5 shrink-0">
-                <div id="cloudStatusPill" class="min-h-[36px] px-3 py-1.5 rounded-full text-[11px] font-mono font-bold bg-[var(--accent-emerald)]/15 border border-[var(--accent-emerald)]/40 text-[var(--accent-emerald)] flex items-center gap-2 shadow-sm">
+                <div id="cloudStatusPill" class="min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold bg-[var(--accent-emerald)]/15 border border-[var(--accent-emerald)]/40 text-[var(--accent-emerald)] flex items-center gap-2 shadow-sm">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_8px_#10B981]"></span>
                     <span id="cloudStatusText" class="truncate max-w-[160px] sm:max-w-none">ELEVENLABS CONVAI: ACTIVE</span>
                 </div>
-                <a href="/telephony" class="hidden lg:flex items-center gap-1.5 min-h-[36px] px-3.5 py-1.5 rounded-xl border border-white/10 hover:border-cyan-400/40 text-xs font-mono text-[var(--text-muted)] hover:text-cyan-300 spring-transition bg-white/[0.02]">
+                <a href="/telephony" class="hidden lg:flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-xl border border-white/10 hover:border-cyan-400/40 text-xs font-mono text-[var(--text-muted)] hover:text-cyan-300 spring-transition bg-white/[0.02] active:scale-[0.98]">
                     <span class="material-symbols-outlined text-[16px]">phone_iphone</span>
                     <span>Telephony</span>
                 </a>
@@ -208,7 +216,7 @@
     </header>
 
     <!-- ── 2. MAIN APPLICATION WORKSPACE ────────────────────────────────────── -->
-    <main class="flex-1 w-full max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-7 flex flex-col gap-6">
+    <main class="flex-1 w-full max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 flex flex-col gap-6">
 
         <!-- ═══════════════════════════════════════════════════════════════════════ -->
         <!-- TAB 1: PROMPT-TO-AGENT BUILDER                                          -->
@@ -264,16 +272,16 @@
                     <div class="flex flex-col gap-2">
                         <label class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Production Templates</label>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="sbi">
+                            <button type="button" class="preset-btn touch-target p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="sbi">
                                 <span>🏦</span><span>Bank Desk</span>
                             </button>
-                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="emergency">
+                            <button type="button" class="preset-btn touch-target p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="emergency">
                                 <span>🚑</span><span>112 SOS</span>
                             </button>
-                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="senior">
+                            <button type="button" class="preset-btn touch-target p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="senior">
                                 <span>👴</span><span>Elder Assist</span>
                             </button>
-                            <button type="button" class="preset-btn min-h-[48px] p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="ecommerce">
+                            <button type="button" class="preset-btn touch-target p-2.5 rounded-xl glass-card-sub hover:border-cyan-400/50 text-xs font-mono text-[var(--text-muted)] hover:text-white spring-transition text-center cursor-pointer active:scale-[0.98] flex items-center justify-center gap-1.5" data-preset="ecommerce">
                                 <span>📦</span><span>Logistics</span>
                             </button>
                         </div>
@@ -282,7 +290,7 @@
                     <!-- Agent Name -->
                     <div class="flex flex-col gap-1.5">
                         <label for="agentName" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Agent Identifier / Name</label>
-                        <input id="agentName" type="text" class="w-full min-h-[48px] px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none spring-transition" value="SBI Customer Care Assistant" placeholder="e.g. SBI Banking Assistant">
+                        <input id="agentName" type="text" class="w-full touch-target px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none spring-transition" value="SBI Customer Care Assistant" placeholder="e.g. SBI Banking Assistant">
                     </div>
 
                     <!-- System Prompt & Security Guardrails -->
@@ -297,14 +305,14 @@
                     <!-- Initial Greeting Message -->
                     <div class="flex flex-col gap-1.5">
                         <label for="agentFirstMessage" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">First Message / Greeting Hook</label>
-                        <input id="agentFirstMessage" type="text" class="w-full min-h-[48px] px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none spring-transition" value="Namaste! Welcome to State Bank of India customer care. How may I assist you with your banking today?">
+                        <input id="agentFirstMessage" type="text" class="w-full touch-target px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs sm:text-sm outline-none spring-transition" value="Namaste! Welcome to State Bank of India customer care. How may I assist you with your banking today?">
                     </div>
 
                     <!-- Voice Model & Language Configuration -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1.5">
                             <label for="agentVoice" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">ElevenLabs Voice Model</label>
-                            <select id="agentVoice" class="w-full min-h-[48px] px-3.5 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none spring-transition cursor-pointer">
+                            <select id="agentVoice" class="w-full touch-target px-3.5 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none spring-transition cursor-pointer">
                                 <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Calm / Friendly - Female)</option>
                                 <option value="pNInz6obpgDQGcFmaJgB">Adam (Professional - Male)</option>
                                 <option value="EXAVITQu4vr4xnSDxMaL">Bella (Clear / Empathetic)</option>
@@ -313,7 +321,7 @@
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label for="agentLanguage" class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Language & Dialect</label>
-                            <select id="agentLanguage" class="w-full min-h-[48px] px-3.5 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none spring-transition cursor-pointer">
+                            <select id="agentLanguage" class="w-full touch-target px-3.5 py-2.5 rounded-xl glass-card-sub border border-white/10 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white font-mono text-xs outline-none spring-transition cursor-pointer">
                                 <option value="en">English (Global / Indian Accent)</option>
                                 <option value="hi">Hindi (हिन्दी / Indic Dialect)</option>
                             </select>
@@ -321,7 +329,7 @@
                     </div>
 
                     <!-- Deploy Button with Tactile Active State -->
-                    <button id="btnDeployAgent" type="button" class="mt-2 w-full min-h-[48px] py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#060913] font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider spring-transition shadow-[0_0_25px_rgba(0,240,255,0.35)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]">
+                    <button id="btnDeployAgent" type="button" class="mt-2 w-full touch-target py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#03060c] font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider spring-transition shadow-[0_0_25px_rgba(0,240,255,0.35)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]">
                         <span class="material-symbols-outlined text-xl">rocket_launch</span>
                         <span>Deploy via /convai/agents</span>
                     </button>
@@ -419,7 +427,7 @@
             <!-- Judge Evaluation Controls Bar -->
             <div class="glass-card p-5 sm:p-6 rounded-3xl flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)]">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular">
                         <span class="material-symbols-outlined text-2xl">science</span>
                     </div>
                     <div>
@@ -429,15 +437,15 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2.5">
-                    <button id="btnTestReal" type="button" class="min-h-[48px] px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-sm">
+                    <button id="btnTestReal" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_8px_#10B981]"></span>
                         <span>🟢 Real Voice (Safe)</span>
                     </button>
-                    <button id="btnTestClone" type="button" class="min-h-[48px] px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-[0_0_20px_rgba(239,68,68,0.35)]">
+                    <button id="btnTestClone" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-[0_0_20px_rgba(239,68,68,0.35)]">
                         <span class="w-2 h-2 rounded-full bg-[var(--accent-crimson)] animate-ping shadow-[0_0_8px_#EF4444]"></span>
                         <span>🔴 AI Clone Attack</span>
                     </button>
-                    <button id="btnResetShield" type="button" class="min-h-[48px] px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 hover:border-cyan-400/40 text-[var(--text-muted)] hover:text-white font-mono text-xs spring-transition cursor-pointer active:scale-[0.98]">
+                    <button id="btnResetShield" type="button" class="touch-target px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 hover:border-cyan-400/40 text-[var(--text-muted)] hover:text-white font-mono text-xs spring-transition cursor-pointer active:scale-[0.98]">
                         🔄 Reset
                     </button>
                 </div>
@@ -460,9 +468,9 @@
 
                     <!-- Caller Profile Card -->
                     <div class="p-6 rounded-2xl glass-card-sub flex flex-col items-center text-center gap-3 relative overflow-hidden">
-                        <div class="w-20 h-20 rounded-full bg-[#050811] border-2 border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular relative">
+                        <div class="w-20 h-20 rounded-full bg-[#03060c] border-2 border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular relative">
                             <span class="material-symbols-outlined text-4xl">person</span>
-                            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[var(--accent-cyan)] border-2 border-[#050811] shadow-[0_0_8px_#00F0FF]"></span>
+                            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[var(--accent-cyan)] border-2 border-[#03060c] shadow-[0_0_8px_#00F0FF]"></span>
                         </div>
                         <div>
                             <div class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">UNKNOWN CALLER</div>
@@ -474,7 +482,7 @@
                         </div>
 
                         <!-- Real-Time Waveform Canvas -->
-                        <div class="w-full mt-2 p-3.5 rounded-2xl bg-[#03060c] border border-white/10 flex flex-col gap-2">
+                        <div class="w-full mt-2 p-3.5 rounded-2xl bg-[#020409] border border-white/10 flex flex-col gap-2 shadow-inner">
                             <div class="flex items-center justify-between text-[10px] font-mono text-[var(--text-muted)]">
                                 <span>Acoustic Waveform Analysis</span>
                                 <span class="text-[var(--accent-cyan)]">16 kHz / Mono</span>
@@ -512,7 +520,7 @@
                             <span class="font-mono text-xs font-bold text-white uppercase tracking-wider">Deepfake Clone Probability</span>
                             <span id="deepfakeScoreBadge" class="text-base font-mono font-extrabold text-[var(--text-muted)]">0%</span>
                         </div>
-                        <div class="w-full h-3.5 rounded-full bg-[#03060c] overflow-hidden p-0.5 border border-white/10">
+                        <div class="w-full h-3.5 rounded-full bg-[#020409] overflow-hidden p-0.5 border border-white/10 shadow-inner">
                             <div id="deepfakeProgressBar" class="h-full rounded-full bg-[var(--accent-cyan)] transition-all duration-300 shadow-[0_0_10px_#00F0FF]" style="width: 0%;"></div>
                         </div>
                         <div class="flex items-center justify-between text-[10px] font-mono text-[var(--text-muted)] mt-1">
@@ -563,7 +571,7 @@
         <section id="tab-arch" class="tab-content hidden flex flex-col gap-6" aria-labelledby="archHeadline">
             <div class="glass-card p-5 sm:p-7 rounded-3xl flex flex-col gap-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)]">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular">
                         <span class="material-symbols-outlined text-2xl">account_tree</span>
                     </div>
                     <div>
@@ -575,27 +583,27 @@
                 <!-- 6-Stage Flow -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 font-mono text-xs">
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">1</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">1</div>
                         <div class="font-bold text-white">User Prompt</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">"Create a voice agent for bank assistant"</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">2</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">2</div>
                         <div class="font-bold text-white">ElevenLabs ConvAI</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">/v1/convai/agents configures voice personality</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">3</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">3</div>
                         <div class="font-bold text-white">Deploy Agent</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">Live WebRTC/WebSocket endpoint active</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">4</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">4</div>
                         <div class="font-bold text-white">Live Call Stream</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">1-sec sliding windows + speech VAD</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#060913] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">5</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">5</div>
                         <div class="font-bold text-white">Dhwani Shield</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">MelCNN + Scribe STT vishing detector</div>
                     </div>
@@ -642,16 +650,16 @@
     </main>
 
     <!-- ── 3. MOBILE FLOATING BOTTOM APP BAR (48px Touch Target) ─────────────── -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050811]/95 backdrop-blur-2xl border-t border-white/10 px-4 py-2 flex items-center justify-around font-mono text-[10px]" aria-label="Mobile Navigation">
-        <button class="nav-tab min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--accent-cyan)] font-extrabold cursor-pointer active:scale-95" data-tab="builder">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#03060c]/95 backdrop-blur-2xl border-t border-white/10 px-4 py-2 flex items-center justify-around font-mono text-[10px]" aria-label="Mobile Navigation">
+        <button class="nav-tab touch-target flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--accent-cyan)] font-extrabold cursor-pointer active:scale-95" data-tab="builder">
             <span class="material-symbols-outlined text-xl">smart_toy</span>
             <span>BUILDER</span>
         </button>
-        <button class="nav-tab min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="shield">
+        <button class="nav-tab touch-target flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="shield">
             <span class="material-symbols-outlined text-xl">verified_user</span>
             <span>SHIELD</span>
         </button>
-        <button class="nav-tab min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="arch">
+        <button class="nav-tab touch-target flex flex-col items-center justify-center gap-1 py-1 px-4 rounded-xl text-[var(--text-muted)] cursor-pointer active:scale-95" data-tab="arch">
             <span class="material-symbols-outlined text-xl">hub</span>
             <span>SYSTEM</span>
         </button>
@@ -660,7 +668,7 @@
     <!-- ── 4. AUTOMATED INTERCEPTOR MODAL (Slide 7 Replica) ─────────────────── -->
     <div id="interceptorBackdrop" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300"></div>
 
-    <div id="interceptorModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[480px] bg-[#090e1f] border-2 border-[var(--accent-crimson)] rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.45)] z-50 p-6 sm:p-7 hidden opacity-0 scale-95 transition-all duration-300 flex flex-col items-center text-center gap-4">
+    <div id="interceptorModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[480px] bg-[#070c18] border-2 border-[var(--accent-crimson)] rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.45)] z-50 p-6 sm:p-7 hidden opacity-0 scale-95 transition-all duration-300 flex flex-col items-center text-center gap-4">
         
         <!-- Glowing Shield Warning Beacon -->
         <div class="relative w-20 h-20 rounded-full bg-rose-500/20 border-2 border-[var(--accent-crimson)] flex items-center justify-center text-[var(--accent-crimson)] animate-pulse shadow-lg">
@@ -677,18 +685,18 @@
         </div>
 
         <!-- Flash v2.5 Voice Alert Audio Player Status Strip -->
-        <div id="interceptorAudioStatus" class="w-full min-h-[48px] py-2.5 px-3.5 rounded-xl glass-card-sub border border-[var(--accent-crimson)]/40 flex items-center justify-center gap-2 text-xs font-mono text-[var(--text-muted)]">
+        <div id="interceptorAudioStatus" class="w-full touch-target py-2.5 px-3.5 rounded-xl glass-card-sub border border-[var(--accent-crimson)]/40 flex items-center justify-center gap-2 text-xs font-mono text-[var(--text-muted)]">
             <span class="material-symbols-outlined text-base text-[var(--accent-crimson)] animate-bounce">volume_up</span>
             <span>Synthesizing Flash v2.5 Voice Warning...</span>
         </div>
 
-        <!-- Action Buttons -->
+        <!-- Action Buttons (Strictly 48px Minimum Touch Targets) -->
         <div class="w-full flex flex-col gap-2.5 pt-2">
-            <button id="btnTerminateCall" type="button" class="w-full min-h-[48px] py-3.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs uppercase tracking-wider spring-transition shadow-[0_0_20px_rgba(239,68,68,0.5)] flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+            <button id="btnTerminateCall" type="button" class="w-full touch-target py-3.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs uppercase tracking-wider spring-transition shadow-[0_0_20px_rgba(239,68,68,0.5)] flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                 <span class="material-symbols-outlined text-lg">call_end</span>
                 <span>TERMINATE CALL</span>
             </button>
-            <button id="btnVerifyIdentity" type="button" class="w-full min-h-[48px] py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-400 font-mono font-extrabold text-xs uppercase tracking-wider spring-transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+            <button id="btnVerifyIdentity" type="button" class="w-full touch-target py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-400 font-mono font-extrabold text-xs uppercase tracking-wider spring-transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                 <span class="material-symbols-outlined text-lg">verified_user</span>
                 <span>VERIFY IDENTITY</span>
             </button>
