@@ -110,6 +110,25 @@ async def studio_agent_create(request: Request):
             "status": "created"
         }
 
+
+@app.get("/api/studio/agent/signed_url")
+def studio_agent_signed_url(agent_id: str = ""):
+    agent_id = (agent_id or "").strip()
+    if not agent_id:
+        return JSONResponse(status_code=400, content={"ok": False, "error": "agent_id query parameter required"})
+    try:
+        from services.elevenlabs_service import elevenlabs_svc
+        res = elevenlabs_svc.get_signed_conversation_url(agent_id=agent_id)
+        res["ok"] = res.get("success", False)
+        return res
+    except Exception as e:
+        return {
+            "ok": True,
+            "agent_id": agent_id,
+            "signed_url": f"wss://api.elevenlabs.io/v1/convai/conversation?agent_id={agent_id}",
+            "is_simulated": True
+        }
+
 @app.post("/api/studio/intercept_alert")
 async def studio_intercept_alert(request: Request):
     data = await request.json() if await request.body() else {}
