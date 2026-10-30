@@ -134,32 +134,100 @@ async def studio_intercept_alert(request: Request):
     data = await request.json() if await request.body() else {}
     text = data.get("text") or data.get("reason") or "Security Alert: Synthetic voice clone detected."
     voice_id = data.get("voice_id")
+    action = data.get("action", "VOICE_INTERCEPT_ALERT")
+    risk_score = float(data.get("risk_score", 0.94))
+
+    # ArmorIQ Intent Assurance Verification
+    armoriq_intent_id = None
+    armoriq_verification = None
+    try:
+        from services.armoriq_guard import armoriq
+        armoriq_verification = armoriq.verify_action_intent(
+            action=action,
+            risk_score=risk_score,
+            context={"text": text, "voice_id": voice_id}
+        )
+        armoriq_intent_id = armoriq_verification.get("intent_id")
+        if not armoriq_verification.get("authorized", False):
+            return JSONResponse(
+                status_code=403,
+                content={
+                    "ok": False,
+                    "error": armoriq_verification.get("reason", "Action rejected by ArmorIQ policy"),
+                    "armoriq_intent_id": armoriq_intent_id,
+                    "armoriq_verification": armoriq_verification
+                }
+            )
+    except Exception as err:
+        logger.warning(f"ArmorIQ check fallback: {err}")
+
     try:
         from services.elevenlabs_service import elevenlabs_svc
         res = elevenlabs_svc.generate_flash_intercept_alert(text=text, voice_id=voice_id)
         res["ok"] = res.get("success", True)
+        if armoriq_intent_id:
+            res["armoriq_intent_id"] = armoriq_intent_id
+        if armoriq_verification:
+            res["armoriq_verification"] = armoriq_verification
         return res
     except Exception:
-        return {"ok": True, "status": "alert_dispatched", "latency_ms": 38, "audio_base64": None}
+        return {
+            "ok": True,
+            "status": "alert_dispatched",
+            "latency_ms": 38,
+            "audio_base64": None,
+            "armoriq_intent_id": armoriq_intent_id,
+            "armoriq_verification": armoriq_verification
+        }
+
+@app.post("/api/studio/armoriq/verify")
+async def studio_armoriq_verify(request: Request):
+    data = await request.json() if await request.body() else {}
+    action = data.get("action", "TERMINATE_CALL")
+    risk_score = float(data.get("risk_score", 0.94))
+    context = data.get("context", {})
+    threshold = float(data.get("threshold", 0.75))
+    try:
+        from services.armoriq_guard import armoriq
+        receipt = armoriq.verify_action_intent(
+            action=action,
+            risk_score=risk_score,
+            context=context,
+            threshold=threshold
+        )
+        return {
+            "ok": True,
+            "authorized": receipt.get("authorized", False),
+            "armoriq_intent_id": receipt.get("intent_id"),
+            "armoriq_verification": receipt
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"ok": False, "error": str(e)})
 
 # ═════════════════════════════════════════════════════════════════════════════
 # ── HTML PAGES & STATIC FILES ────────────────────────────────────────────────
 # ═════════════════════════════════════════════════════════════════════════════
 
+NO_CACHE_HEADERS = {
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
+}
+
 @app.get("/")
 def get_root():
     if os.path.exists("static/studio.html"):
-        return FileResponse("static/studio.html")
-    return FileResponse("static/index.html")
+        return FileResponse("static/studio.html", headers=NO_CACHE_HEADERS)
+    return FileResponse("static/index.html", headers=NO_CACHE_HEADERS)
 
 @app.get("/studio")
 @app.get("/studio.html")
 def get_studio():
-    return FileResponse("static/studio.html")
+    return FileResponse("static/studio.html", headers=NO_CACHE_HEADERS)
 
 @app.get("/telephony")
 def get_telephony():
-    return FileResponse("static/index.html")
+    return FileResponse("static/index.html", headers=NO_CACHE_HEADERS)
 
 # Static assets
 if os.path.exists("static"):
