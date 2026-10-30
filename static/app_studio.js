@@ -110,15 +110,21 @@ function switchTab(tabName) {
     state.activeTab = tabName;
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
     document.querySelectorAll('.nav-tab').forEach(b => {
-        b.classList.remove('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
+        b.classList.remove('bg-[var(--accent-cyan)]', 'text-[#060913]', 'text-[var(--accent-cyan)]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
         b.classList.add('text-[var(--text-muted)]');
     });
 
-    const activeBtn = document.querySelector(`.nav-tab[data-tab="${tabName}"]`);
-    const activeContent = document.getElementById(`tab-${tabName}`);
-    if (activeBtn && activeContent) {
+    document.querySelectorAll(`.nav-tab[data-tab="${tabName}"]`).forEach(activeBtn => {
         activeBtn.classList.remove('text-[var(--text-muted)]');
-        activeBtn.classList.add('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
+        if (activeBtn.closest('nav.md\\:hidden')) {
+            activeBtn.classList.add('text-[var(--accent-cyan)]', 'font-extrabold');
+        } else {
+            activeBtn.classList.add('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
+        }
+    });
+
+    const activeContent = document.getElementById(`tab-${tabName}`);
+    if (activeContent) {
         activeContent.classList.remove('hidden');
     }
 }
