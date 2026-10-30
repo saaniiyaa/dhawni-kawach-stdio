@@ -89,16 +89,33 @@ function initTabs() {
 function switchTab(tabName) {
     state.activeTab = tabName;
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    
+    // Reset all tabs
     document.querySelectorAll('.nav-tab').forEach(b => {
-        b.classList.remove('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
-        b.classList.add('text-[var(--text-muted)]');
+        const isDesktop = !b.closest('nav.md\\:hidden');
+        if (isDesktop) {
+            b.classList.remove('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
+            b.classList.add('text-[var(--text-muted)]');
+        } else {
+            b.classList.remove('text-[var(--accent-cyan)]', 'font-extrabold');
+            b.classList.add('text-[var(--text-muted)]');
+        }
     });
 
-    const activeBtn = document.querySelector(`.nav-tab[data-tab="${tabName}"]`);
+    // Highlight all matching active buttons (desktop & mobile)
+    document.querySelectorAll(`.nav-tab[data-tab="${tabName}"]`).forEach(activeBtn => {
+        const isDesktop = !activeBtn.closest('nav.md\\:hidden');
+        if (isDesktop) {
+            activeBtn.classList.remove('text-[var(--text-muted)]');
+            activeBtn.classList.add('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
+        } else {
+            activeBtn.classList.remove('text-[var(--text-muted)]');
+            activeBtn.classList.add('text-[var(--accent-cyan)]', 'font-extrabold');
+        }
+    });
+
     const activeContent = document.getElementById(`tab-${tabName}`);
-    if (activeBtn && activeContent) {
-        activeBtn.classList.remove('text-[var(--text-muted)]');
-        activeBtn.classList.add('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
+    if (activeContent) {
         activeContent.classList.remove('hidden');
     }
 }
@@ -272,13 +289,13 @@ function renderDeployedAgent(data) {
     const widgetBox = document.getElementById('convaiWidgetContainer');
     if (widgetBox) {
         widgetBox.innerHTML = `
-            <div class="flex flex-col items-center justify-center p-6 border border-[var(--accent-cyan)]/30 rounded-2xl bg-[#060913]/80 gap-3 text-center">
-                <div id="convaiStatusIcon" class="w-12 h-12 rounded-full bg-[var(--accent-cyan)]/15 border border-[var(--accent-cyan)] flex items-center justify-center text-[var(--accent-cyan)] transition-all">
+            <div class="flex flex-col items-center justify-center p-5 sm:p-6 border border-cyan-400/25 rounded-2xl glass-panel-sub gap-3 text-center transition-all duration-300">
+                <div id="convaiStatusIcon" class="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-glass-sm transition-all duration-300">
                     <span class="material-symbols-outlined text-3xl">mic</span>
                 </div>
                 <div id="convaiSessionTitle" class="text-sm font-mono font-bold text-[var(--text-primary)]">ElevenLabs ConvAI Session Ready</div>
-                <div id="convaiSessionDesc" class="text-xs font-mono text-[var(--text-muted)] text-center max-w-sm">Agent is active with live speech capabilities. Click below to start real-time microphone stream.</div>
-                <button id="btnStartTalkSession" type="button" class="px-5 py-2.5 rounded-xl bg-[var(--accent-cyan)] text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 hover:bg-white transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] cursor-pointer">
+                <div id="convaiSessionDesc" class="text-xs font-mono text-[var(--text-muted)] text-center max-w-sm leading-relaxed">Agent is active with live speech capabilities. Click below to start full-duplex microphone stream.</div>
+                <button id="btnStartTalkSession" type="button" class="min-h-[44px] px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 transition-spring shadow-[0_0_15px_rgba(0,240,255,0.35)] cursor-pointer active:scale-95">
                     <span class="material-symbols-outlined text-lg">support_agent</span>
                     <span id="btnStartTalkSessionText">START CONVAI VOICE SESSION</span>
                 </button>
@@ -800,29 +817,48 @@ function initVisualizer() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
+    // High-DPI Retina scaling
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const displayWidth = rect.width || 400;
+    const displayHeight = rect.height || 70;
+    canvas.width = displayWidth * dpr;
+    canvas.height = displayHeight * dpr;
+    ctx.scale(dpr, dpr);
+
     let phase = 0;
     function renderWave() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, displayWidth, displayHeight);
         
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2.2;
         const isAnyActive = state.isCallActive || state.convaiSessionActive;
-        ctx.strokeStyle = isAnyActive ? '#00F0FF' : 'rgba(148, 163, 184, 0.3)';
+        
+        // Dynamic gradient stroke
+        const grad = ctx.createLinearGradient(0, 0, displayWidth, 0);
+        if (isAnyActive) {
+            grad.addColorStop(0, '#00F0FF');
+            grad.addColorStop(0.5, '#06B6D4');
+            grad.addColorStop(1, '#10B981');
+        } else {
+            grad.addColorStop(0, 'rgba(148, 163, 184, 0.25)');
+            grad.addColorStop(0.5, 'rgba(148, 163, 184, 0.45)');
+            grad.addColorStop(1, 'rgba(148, 163, 184, 0.25)');
+        }
+        ctx.strokeStyle = grad;
         ctx.beginPath();
 
-        const width = canvas.width;
-        const height = canvas.height;
-        const mid = height / 2;
-        const freq = (state.isCallActive || state.convaiSessionActive) ? 0.05 : 0.015;
-        const amp = (state.isCallActive || state.convaiSessionActive) ? 22 : 4;
+        const mid = displayHeight / 2;
+        const freq = isAnyActive ? 0.05 : 0.015;
+        const amp = isAnyActive ? 20 : 4;
 
-        for (let x = 0; x < width; x++) {
-            const y = mid + Math.sin(x * freq + phase) * amp * Math.sin(x * 0.01);
+        for (let x = 0; x < displayWidth; x++) {
+            const y = mid + Math.sin(x * freq + phase) * amp * Math.sin(x * 0.012);
             if (x === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         }
         ctx.stroke();
 
-        phase += (state.isCallActive || state.convaiSessionActive) ? 0.08 : 0.02;
+        phase += isAnyActive ? 0.08 : 0.02;
         state.canvasAnimationId = requestAnimationFrame(renderWave);
     }
     renderWave();
