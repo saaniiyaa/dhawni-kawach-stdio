@@ -347,6 +347,10 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2.5">
+                    <button id="btnToggleLiveDefense" type="button" class="px-4 py-2.5 rounded-xl bg-[var(--accent-cyan)] hover:bg-white text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+                        <span class="material-symbols-outlined text-base">mic</span>
+                        <span id="btnToggleLiveDefenseText">🎙️ START LIVE DEFENSE MONITOR</span>
+                    </button>
                     <button id="btnTestReal" type="button" class="px-4 py-2.5 rounded-xl bg-[var(--accent-emerald)]/15 hover:bg-[var(--accent-emerald)]/25 border border-[var(--accent-emerald)] text-[var(--accent-emerald)] font-mono font-bold text-xs flex items-center gap-2 transition-all cursor-pointer active:scale-95">
                         <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse"></span>
                         <span>🟢 Real Voice Test (Safe)</span>
@@ -384,7 +388,7 @@
                         <div>
                             <div class="text-xs font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">UNKNOWN CALLER</div>
                             <div class="text-xl font-mono font-extrabold text-white mt-0.5">+91 98765 43210</div>
-                            <div class="text-[11px] font-mono text-[var(--accent-cyan)] mt-1">Telecom Stream: Audio Ingest Active</div>
+                            <div id="telecomStreamStatus" class="text-[11px] font-mono text-[var(--accent-cyan)] mt-1">Telecom Stream: Audio Ingest Active</div>
                         </div>
 
                         <!-- Real-Time Waveform Canvas -->
@@ -394,6 +398,20 @@
                                 <span class="text-[var(--accent-cyan)]">16 kHz / Mono</span>
                             </div>
                             <canvas id="waveCanvas" width="400" height="70" class="w-full h-16 block"></canvas>
+                        </div>
+
+                        <!-- Live Call Transcript (Scribe STT) Feed Box -->
+                        <div class="w-full p-3 rounded-xl bg-[#060a14] border border-[var(--border-card)]/40 flex flex-col gap-1.5 text-left">
+                            <div class="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)]">
+                                <span class="flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-sm text-[var(--accent-cyan)]">subtitles</span>
+                                    <span>Live Call Transcript (Scribe STT)</span>
+                                </span>
+                                <span id="sttStatusBadge" class="text-[10px] font-bold text-[var(--text-muted)]">STANDBY</span>
+                            </div>
+                            <div id="liveTranscriptFeed" class="p-3 rounded-xl bg-[#060a14] border border-[var(--border-card)] text-xs font-mono text-white h-20 overflow-y-auto leading-relaxed">
+                                <span class="text-[var(--text-muted)] italic">Awaiting speech... speak into microphone to see real-time transcription.</span>
+                            </div>
                         </div>
                     </div>
 
