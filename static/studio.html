@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <meta name="theme-color" content="#03060c">
+    <meta name="theme-color" content="#0B0F17">
     <meta name="color-scheme" content="dark">
     <meta name="description" content="Dhwani Kavach Studio — Enterprise-Grade Voice AI Agent Builder & Real-Time Deepfake Acoustic Interceptor">
     <title>Dhwani Kavach Studio — Enterprise Voice AI Defense Platform</title>
@@ -26,32 +26,34 @@
             theme: {
                 extend: {
                     colors: {
-                        obsidian: {
-                            DEFAULT: '#03060c',
-                            50: '#111827',
-                            100: '#0b1120',
-                            200: '#070c18',
-                            300: '#050912',
-                            900: '#03060c'
+                        slate: {
+                            950: '#0B0F17',
+                            900: '#111827',
+                            850: '#151E2E',
+                            800: '#1E293B',
+                            700: '#334155'
                         },
-                        cyber: {
-                            cyan: '#00F0FF',
-                            teal: '#06B6D4',
-                            emerald: '#10B981',
-                            amber: '#F59E0B',
-                            crimson: '#EF4444'
+                        brand: {
+                            DEFAULT: '#0284C7',
+                            hover: '#0369A1',
+                            light: '#38BDF8',
+                            subtle: 'rgba(2, 132, 199, 0.12)'
+                        },
+                        verdict: {
+                            safe: '#10B981',
+                            warning: '#F59E0B',
+                            threat: '#EF4444'
                         }
                     },
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-                        body: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
                         mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
                     },
                     boxShadow: {
-                        'specular': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 24px 48px -18px rgba(0, 0, 0, 0.75)',
-                        'glow-cyan': '0 0 30px -4px rgba(0, 240, 255, 0.4)',
-                        'glow-emerald': '0 0 30px -4px rgba(16, 185, 129, 0.4)',
-                        'glow-crimson': '0 0 35px -2px rgba(239, 68, 68, 0.5)'
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.35), 0 1px 2px -1px rgba(0, 0, 0, 0.2)',
+                        'card-elevated': '0 10px 25px -5px rgba(0, 0, 0, 0.45), 0 8px 10px -6px rgba(0, 0, 0, 0.3)',
+                        'hairline': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.06)'
                     }
                 }
             }
@@ -60,101 +62,106 @@
 
     <style>
         :root {
-            --bg-page: #03060c;
-            --bg-card: rgba(8, 13, 27, 0.76);
-            --bg-card-sub: rgba(4, 7, 16, 0.85);
-            --border-card: rgba(255, 255, 255, 0.09);
-            --border-card-hover: rgba(0, 240, 255, 0.4);
-            --accent-cyan: #00F0FF;
+            /* High-Trust Neutral Slate Theme (Stripe Radar / Linear Inspired) */
+            --bg-page: #0B0F17;
+            --bg-card: rgba(17, 24, 39, 0.88);
+            --bg-card-sub: rgba(15, 23, 42, 0.82);
+            --border-card: rgba(255, 255, 255, 0.08);
+            --border-card-hover: rgba(255, 255, 255, 0.16);
+            --accent-cyan: #0284C7;
             --accent-emerald: #10B981;
             --accent-crimson: #EF4444;
             --accent-amber: #F59E0B;
             --text-primary: #F8FAFC;
+            --text-secondary: #CBD5E1;
             --text-muted: #94A3B8;
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Ambient Obsidian Canvas with Multi-Stop Radial Color Bleeds */
+        /* Grounded Neutral Dark Canvas - Zero Artificial Neon Glows */
         body {
             background-color: var(--bg-page);
             background-image: 
-                radial-gradient(ellipse 90% 60% at 50% -14%, rgba(0, 240, 255, 0.07), transparent 75%),
-                radial-gradient(ellipse 70% 50% at 100% 85%, rgba(16, 185, 129, 0.04), transparent 72%),
-                radial-gradient(ellipse 60% 40% at 0% 40%, rgba(239, 68, 68, 0.03), transparent 65%),
-                #03060c;
+                radial-gradient(ellipse 80% 50% at 50% -8%, rgba(2, 132, 199, 0.04), transparent 60%),
+                #0B0F17;
             background-attachment: fixed;
             color: var(--text-primary);
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
-            line-height: 1.6;
+            line-height: 1.5;
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Clean Proportional Heading Hierarchy */
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
         .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             display: inline-block;
             vertical-align: middle;
             line-height: 1;
         }
 
-        /* Multi-Layered Specular Glassmorphism */
+        /* Clean Enterprise Card Surfaces with 1px Subtle Dividers */
         .glass-card {
             background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-card);
             box-shadow: 
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
-                0 24px 48px -18px rgba(0, 0, 0, 0.75);
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+                0 4px 20px -2px rgba(0, 0, 0, 0.4);
         }
 
         .glass-card-sub {
             background: var(--bg-card-sub);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
         }
 
-        /* Tactile Spring Physics */
+        /* Tactile Spring Transitions */
         .spring-transition {
-            transition: all 250ms var(--ease-spring);
+            transition: all 200ms var(--ease-spring);
         }
 
-        /* CRT Terminal Scanlines */
+        /* Professional Developer Activity Console (Zero Scanlines) */
         .terminal-scanlines {
-            background: 
-                linear-gradient(rgba(14, 20, 34, 0) 50%, rgba(0, 0, 0, 0.32) 50%),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            background-size: 100% 3px, 6px 100%;
+            background: #090D16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
         }
 
-        /* Precision Minimal Scrollbars */
+        /* Neutral Low-Fatigue Scrollbars */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(3, 6, 12, 0.6);
+            background: #0B0F17;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 240, 255, 0.22);
+            background: rgba(148, 163, 184, 0.25);
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-cyan);
+            background: rgba(148, 163, 184, 0.45);
         }
 
-        /* Living Ambient Status Beacon */
+        /* Calm Status Beacon */
         @keyframes beacon-glow {
-            0%, 100% { transform: scale(1); opacity: 0.95; }
-            50% { transform: scale(1.22); opacity: 0.4; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.08); }
         }
         .animate-beacon {
-            animation: beacon-glow 2.5s ease-in-out infinite;
+            animation: beacon-glow 3s ease-in-out infinite;
         }
 
-        /* Touch target minimum utility */
+        /* Touch target accessibility utility */
         .touch-target {
             min-height: 48px;
             min-width: 48px;
@@ -162,17 +169,17 @@
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen antialiased selection:bg-[var(--accent-cyan)] selection:text-black pb-24 md:pb-0 overflow-x-hidden">
+<body class="flex flex-col min-h-screen antialiased selection:bg-sky-500/20 selection:text-white pb-24 md:pb-0 overflow-x-hidden">
 
     <!-- ── 1. PRIMARY TOP NAVIGATION HEADER ─────────────────────────────────── -->
-    <header class="w-full bg-[#03060c]/90 backdrop-blur-2xl border-b border-white/[0.08] sticky top-0 z-40 px-3.5 sm:px-6 lg:px-8 py-3.5 shadow-[0_4px_30px_rgba(0,0,0,0.6)]">
+    <header class="w-full bg-[#03060c]/90 backdrop-blur-2xl border-b border-white/[0.08] sticky top-0 z-40 px-3.5 sm:px-6 lg:px-8 py-3.5 shadow-sm">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
             
             <!-- Logo & Brand Hierarchy -->
             <div class="flex items-center gap-3 min-w-0">
-                <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-blue-600/10 border border-cyan-400/35 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular shrink-0 group">
+                <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/25 to-blue-600/10 border border-cyan-400/35 flex items-center justify-center text-[var(--accent-cyan)] shadow-sm shrink-0 group">
                     <span class="material-symbols-outlined text-2xl transition-transform duration-300 group-hover:scale-110">shield_with_heart</span>
-                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--accent-emerald)] shadow-[0_0_8px_#10B981] animate-beacon"></span>
+                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--accent-emerald)]  animate-beacon"></span>
                 </div>
                 <div class="flex flex-col min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
@@ -187,7 +194,7 @@
 
             <!-- Desktop Segmented Tab Switcher (40px Height, Keyboard Accessible) -->
             <nav class="hidden md:flex items-center bg-[#050912]/95 p-1.5 rounded-2xl border border-white/[0.09] font-mono text-xs font-bold shadow-inner" aria-label="Studio Navigation">
-                <button class="nav-tab min-h-[40px] px-4 py-2 rounded-xl spring-transition flex items-center gap-2 bg-[var(--accent-cyan)] text-[#060913] font-extrabold shadow-[0_0_15px_rgba(0,240,255,0.35)] cursor-pointer active:scale-[0.98]" data-tab="builder">
+                <button class="nav-tab min-h-[40px] px-4 py-2 rounded-xl spring-transition flex items-center gap-2 bg-[var(--accent-cyan)] text-[#060913] font-extrabold shadow-sm cursor-pointer active:scale-[0.98]" data-tab="builder">
                     <span class="material-symbols-outlined text-[18px]">smart_toy</span>
                     <span>AGENT BUILDER</span>
                 </button>
@@ -204,7 +211,7 @@
             <!-- Right Telemetry & Status Badges -->
             <div class="flex items-center gap-2.5 shrink-0">
                 <div id="cloudStatusPill" class="min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold bg-[var(--accent-emerald)]/15 border border-[var(--accent-emerald)]/40 text-[var(--accent-emerald)] flex items-center gap-2 shadow-sm">
-                    <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_8px_#10B981]"></span>
+                    <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse "></span>
                     <span id="cloudStatusText" class="truncate max-w-[160px] sm:max-w-none">ELEVENLABS CONVAI: ACTIVE</span>
                 </div>
                 <a href="/telephony" class="hidden lg:flex items-center gap-1.5 min-h-[38px] px-3.5 py-1.5 rounded-xl border border-white/10 hover:border-cyan-400/40 text-xs font-mono text-[var(--text-muted)] hover:text-cyan-300 spring-transition bg-white/[0.02] active:scale-[0.98]">
@@ -225,7 +232,7 @@
             
             <!-- Headline Hero Banner with Ambient Glow -->
             <div class="glass-card p-5 sm:p-7 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
-                <div class="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
                 
                 <div class="flex flex-col gap-2 z-10">
                     <div class="flex items-center gap-2 flex-wrap">
@@ -245,11 +252,11 @@
 
                 <div class="flex items-center gap-2.5 flex-wrap z-10 self-stretch md:self-auto justify-start md:justify-end">
                     <div class="px-3.5 py-2 rounded-xl glass-card-sub text-xs font-mono text-[var(--accent-cyan)] flex items-center gap-2 border border-cyan-400/20">
-                        <span class="w-2 h-2 rounded-full bg-[var(--accent-cyan)] shadow-[0_0_6px_#00F0FF]"></span>
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-cyan)] "></span>
                         <span>Latency: ~75ms</span>
                     </div>
                     <div class="px-3.5 py-2 rounded-xl glass-card-sub text-xs font-mono text-[var(--accent-emerald)] flex items-center gap-2 border border-emerald-500/20">
-                        <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] shadow-[0_0_6px_#10B981]"></span>
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] "></span>
                         <span>Shield: Active</span>
                     </div>
                 </div>
@@ -329,7 +336,7 @@
                     </div>
 
                     <!-- Deploy Button with Tactile Active State -->
-                    <button id="btnDeployAgent" type="button" class="mt-2 w-full touch-target py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#03060c] font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider spring-transition shadow-[0_0_25px_rgba(0,240,255,0.35)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]">
+                    <button id="btnDeployAgent" type="button" class="mt-2 w-full touch-target py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#03060c] font-mono font-extrabold text-xs sm:text-sm uppercase tracking-wider spring-transition shadow-sm hover:shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]">
                         <span class="material-symbols-outlined text-xl">rocket_launch</span>
                         <span>Deploy via /convai/agents</span>
                     </button>
@@ -405,7 +412,7 @@
                                 <h4 class="font-mono font-bold text-xs text-white uppercase tracking-wider">Live Activity Terminal</h4>
                             </div>
                             <span class="text-[10px] font-mono text-[var(--accent-emerald)] flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_6px_#10B981]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-emerald)] animate-pulse "></span>
                                 <span>Telemetry Active</span>
                             </span>
                         </div>
@@ -427,7 +434,7 @@
             <!-- Judge Evaluation Controls Bar -->
             <div class="glass-card p-5 sm:p-6 rounded-3xl flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)] shadow-sm">
                         <span class="material-symbols-outlined text-2xl">science</span>
                     </div>
                     <div>
@@ -438,17 +445,17 @@
 
                 <div class="flex flex-wrap items-center gap-2.5">
                     <!-- Live Microphone Defense Toggle -->
-                    <button id="btnToggleLiveDefense" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#03060c] font-mono font-extrabold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                    <button id="btnToggleLiveDefense" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#03060c] font-mono font-extrabold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md">
                         <span class="material-symbols-outlined text-base">mic</span>
                         <span id="btnToggleLiveDefenseText">START LIVE DEFENSE MONITOR</span>
                     </button>
                     <!-- Quick Test Vectors -->
                     <button id="btnTestReal" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_8px_#10B981]"></span>
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse "></span>
                         <span>🟢 Real Voice (Safe)</span>
                     </button>
-                    <button id="btnTestClone" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-[0_0_20px_rgba(239,68,68,0.35)]">
-                        <span class="w-2 h-2 rounded-full bg-[var(--accent-crimson)] animate-ping shadow-[0_0_8px_#EF4444]"></span>
+                    <button id="btnTestClone" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-[var(--accent-crimson)] animate-ping "></span>
                         <span>🔴 AI Clone Attack</span>
                     </button>
                     <button id="btnResetShield" type="button" class="touch-target px-4 py-2.5 rounded-xl glass-card-sub border border-white/10 hover:border-cyan-400/40 text-[var(--text-muted)] hover:text-white font-mono text-xs spring-transition cursor-pointer active:scale-[0.98]">
@@ -474,15 +481,15 @@
 
                     <!-- Caller Profile Card -->
                     <div class="p-6 rounded-2xl glass-card-sub flex flex-col items-center text-center gap-3 relative overflow-hidden">
-                        <div class="w-20 h-20 rounded-full bg-[#03060c] border-2 border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular relative">
+                        <div class="w-20 h-20 rounded-full bg-[#03060c] border-2 border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-sm relative">
                             <span class="material-symbols-outlined text-4xl">person</span>
-                            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[var(--accent-cyan)] border-2 border-[#03060c] shadow-[0_0_8px_#00F0FF]"></span>
+                            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[var(--accent-cyan)] border-2 border-[#03060c] "></span>
                         </div>
                         <div>
                             <div class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">UNKNOWN CALLER</div>
                             <div class="text-xl font-mono font-extrabold text-white mt-0.5 tracking-tight">+91 98765 43210</div>
                             <div id="telecomStreamStatus" class="text-xs font-mono text-[var(--accent-cyan)] mt-1 flex items-center justify-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-cyan)] animate-pulse shadow-[0_0_6px_#00F0FF]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-cyan)] animate-pulse "></span>
                                 <span>Telecom Audio Ingest Active</span>
                             </div>
                         </div>
@@ -541,7 +548,7 @@
                             <span id="deepfakeScoreBadge" class="text-base font-mono font-extrabold text-[var(--text-muted)]">0%</span>
                         </div>
                         <div class="w-full h-3.5 rounded-full bg-[#020409] overflow-hidden p-0.5 border border-white/10 shadow-inner">
-                            <div id="deepfakeProgressBar" class="h-full rounded-full bg-[var(--accent-cyan)] transition-all duration-300 shadow-[0_0_10px_#00F0FF]" style="width: 0%;"></div>
+                            <div id="deepfakeProgressBar" class="h-full rounded-full bg-[var(--accent-cyan)] transition-all duration-300 " style="width: 0%;"></div>
                         </div>
                         <div class="flex items-center justify-between text-[10px] font-mono text-[var(--text-muted)] mt-1">
                             <span>0% (Human Speech)</span>
@@ -591,7 +598,7 @@
         <section id="tab-arch" class="tab-content hidden flex flex-col gap-6" aria-labelledby="archHeadline">
             <div class="glass-card p-5 sm:p-7 rounded-3xl flex flex-col gap-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)] shadow-specular">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-[var(--accent-cyan)] shadow-sm">
                         <span class="material-symbols-outlined text-2xl">account_tree</span>
                     </div>
                     <div>
@@ -603,32 +610,32 @@
                 <!-- 6-Stage Flow -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 font-mono text-xs">
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">1</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] ">1</div>
                         <div class="font-bold text-white">User Prompt</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">"Create a voice agent for bank assistant"</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">2</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] ">2</div>
                         <div class="font-bold text-white">ElevenLabs ConvAI</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">/v1/convai/agents configures voice personality</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">3</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] ">3</div>
                         <div class="font-bold text-white">Deploy Agent</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">Live WebRTC/WebSocket endpoint active</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">4</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] ">4</div>
                         <div class="font-bold text-white">Live Call Stream</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">1-sec sliding windows + speech VAD</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#00F0FF]">5</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-cyan)] text-[#03060c] font-black flex items-center justify-center text-[11px] ">5</div>
                         <div class="font-bold text-white">Dhwani Shield</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">MelCNN + Scribe STT vishing detector</div>
                     </div>
                     <div class="p-4 rounded-2xl glass-card-sub border border-[var(--accent-crimson)]/50 flex flex-col gap-2">
-                        <div class="w-6 h-6 rounded-full bg-[var(--accent-crimson)] text-white font-black flex items-center justify-center text-[11px] shadow-[0_0_8px_#EF4444]">6</div>
+                        <div class="w-6 h-6 rounded-full bg-[var(--accent-crimson)] text-white font-black flex items-center justify-center text-[11px] ">6</div>
                         <div class="font-bold text-[var(--accent-crimson)]">INTERCEPT</div>
                         <div class="text-[11px] text-[var(--text-muted)] leading-relaxed">Flash v2.5 voice warning & call hold</div>
                     </div>
@@ -688,7 +695,7 @@
     <!-- ── 4. AUTOMATED INTERCEPTOR MODAL (Slide 7 Replica + 2FA PIN Challenge) ─ -->
     <div id="interceptorBackdrop" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300"></div>
 
-    <div id="interceptorModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[480px] bg-[#070c18] border-2 border-[var(--accent-crimson)] rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.45)] z-50 p-6 sm:p-7 hidden opacity-0 scale-95 transition-all duration-300 flex flex-col items-center text-center gap-4">
+    <div id="interceptorModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[480px] bg-[#070c18] border-2 border-[var(--accent-crimson)] rounded-3xl shadow-2xl z-50 p-6 sm:p-7 hidden opacity-0 scale-95 transition-all duration-300 flex flex-col items-center text-center gap-4">
         
         <!-- Glowing Shield Warning Beacon -->
         <div class="relative w-20 h-20 rounded-full bg-rose-500/20 border-2 border-[var(--accent-crimson)] flex items-center justify-center text-[var(--accent-crimson)] animate-pulse shadow-lg">
@@ -734,7 +741,7 @@
 
         <!-- Action Buttons (Strictly 48px Minimum Touch Targets) -->
         <div class="w-full flex flex-col gap-2.5 pt-2">
-            <button id="btnTerminateCall" type="button" class="w-full touch-target py-3.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs uppercase tracking-wider spring-transition shadow-[0_0_20px_rgba(239,68,68,0.5)] flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+            <button id="btnTerminateCall" type="button" class="w-full touch-target py-3.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs uppercase tracking-wider spring-transition shadow-sm flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                 <span class="material-symbols-outlined text-lg">call_end</span>
                 <span>TERMINATE CALL</span>
             </button>
