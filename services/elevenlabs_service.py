@@ -263,7 +263,7 @@ class ElevenLabsService:
         # Fallback URL
         return {
             "success": True,
-            "signed_url": f"wss://api.elevenlabs.io/v1/convai/conversation?agent_id={agent_id}&token=signed_token",
+            "signed_url": f"wss://api.elevenlabs.io/v1/convai/conversation?agent_id={agent_id}",
             "agent_id": agent_id,
             "is_simulated": True
         }
