@@ -432,11 +432,17 @@
                     </div>
                     <div>
                         <div id="shieldHeadline" class="font-mono font-bold text-sm sm:text-base text-white">Live Evaluation Presets (Judging Suite)</div>
-                        <div class="text-xs font-mono text-[var(--text-muted)]">Test continuous acoustic scoring and automated Flash v2.5 voice intercept</div>
+                        <div class="text-xs font-mono text-[var(--text-muted)]">Continuous acoustic scoring, live microphone defense & automated Flash v2.5 voice intercept</div>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2.5">
+                    <!-- Live Microphone Defense Toggle -->
+                    <button id="btnToggleLiveDefense" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#03060c] font-mono font-extrabold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                        <span class="material-symbols-outlined text-base">mic</span>
+                        <span id="btnToggleLiveDefenseText">START LIVE DEFENSE MONITOR</span>
+                    </button>
+                    <!-- Quick Test Vectors -->
                     <button id="btnTestReal" type="button" class="touch-target px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 font-mono font-bold text-xs flex items-center gap-2 spring-transition cursor-pointer active:scale-[0.98] shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-[var(--accent-emerald)] animate-pulse shadow-[0_0_8px_#10B981]"></span>
                         <span>🟢 Real Voice (Safe)</span>
@@ -454,7 +460,7 @@
             <!-- Call Shield Telemetry Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- Left Column: Caller Ingestion & Waveform -->
+                <!-- Left Column: Caller Ingestion, Waveform & Scribe STT Transcript -->
                 <div class="lg:col-span-6 glass-card p-5 sm:p-7 rounded-3xl flex flex-col gap-5">
                     <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
                         <div class="flex items-center gap-2">
@@ -475,7 +481,7 @@
                         <div>
                             <div class="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">UNKNOWN CALLER</div>
                             <div class="text-xl font-mono font-extrabold text-white mt-0.5 tracking-tight">+91 98765 43210</div>
-                            <div class="text-xs font-mono text-[var(--accent-cyan)] mt-1 flex items-center justify-center gap-1.5">
+                            <div id="telecomStreamStatus" class="text-xs font-mono text-[var(--accent-cyan)] mt-1 flex items-center justify-center gap-1.5">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent-cyan)] animate-pulse shadow-[0_0_6px_#00F0FF]"></span>
                                 <span>Telecom Audio Ingest Active</span>
                             </div>
@@ -488,6 +494,20 @@
                                 <span class="text-[var(--accent-cyan)]">16 kHz / Mono</span>
                             </div>
                             <canvas id="waveCanvas" width="400" height="70" class="w-full h-16 block rounded-lg"></canvas>
+                        </div>
+
+                        <!-- Live Call Transcript (Scribe STT) Feed Box -->
+                        <div class="w-full mt-2 p-3.5 rounded-2xl glass-card-sub border border-white/10 flex flex-col gap-2 text-left">
+                            <div class="flex items-center justify-between text-[11px] font-mono text-[var(--text-muted)]">
+                                <span class="flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-sm text-[var(--accent-cyan)]">subtitles</span>
+                                    <span class="font-bold text-white uppercase tracking-wider">Live Call Transcript (Scribe STT)</span>
+                                </span>
+                                <span id="sttStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-white/5 border border-white/10 text-[var(--text-muted)]">STANDBY</span>
+                            </div>
+                            <div id="liveTranscriptFeed" class="p-3 rounded-xl bg-[#020409] border border-white/10 text-xs font-mono text-white h-24 overflow-y-auto leading-relaxed shadow-inner">
+                                <span class="text-[var(--text-muted)] italic">Awaiting speech... speak into microphone to see real-time transcription.</span>
+                            </div>
                         </div>
                     </div>
 

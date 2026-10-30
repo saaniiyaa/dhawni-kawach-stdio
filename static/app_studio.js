@@ -31,7 +31,24 @@ const state = {
     convaiMicSource: null,
     convaiMuteGain: null,
     convaiNextAudioTime: 0,
-    convaiScheduledSources: []
+    convaiScheduledSources: [],
+    // Step 2: Tab 2 Live Defense & MelCNN Continuous Sliding Window State
+    shieldActive: false,
+    shieldMicStream: null,
+    shieldAudioContext: null,
+    shieldAnalyser: null,
+    shieldProcessor: null,
+    shieldMicSource: null,
+    shieldMuteGain: null,
+    shieldPcmChunks: [],
+    shieldPcmLength: 0,
+    shieldIsScoring: false,
+    shieldConsecutiveHigh: 0,
+    shieldSpeechRec: null,
+    shieldTranscriptLines: [],
+    shieldActiveInterim: "",
+    shieldScamScore: 0,
+    lastDeepfakeScore: 0
 };
 
 // Preset Prompts for No-Code Builder
@@ -75,6 +92,9 @@ window.addEventListener('beforeunload', () => {
     if (state.convaiSessionActive) {
         stopConvaiSession();
     }
+    if (state.shieldActive) {
+        stopLiveDefense();
+    }
 });
 
 function initTabs() {
@@ -89,28 +109,17 @@ function initTabs() {
 function switchTab(tabName) {
     state.activeTab = tabName;
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-    
-    // Reset all tabs
     document.querySelectorAll('.nav-tab').forEach(b => {
-        const isDesktop = !b.closest('nav.md\\:hidden');
-        if (isDesktop) {
-            b.classList.remove('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
-            b.classList.add('text-[var(--text-muted)]');
-        } else {
-            b.classList.remove('text-[var(--accent-cyan)]', 'font-extrabold');
-            b.classList.add('text-[var(--text-muted)]');
-        }
+        b.classList.remove('bg-[var(--accent-cyan)]', 'text-[#060913]', 'text-[var(--accent-cyan)]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
+        b.classList.add('text-[var(--text-muted)]');
     });
 
-    // Highlight all matching active buttons (desktop & mobile)
     document.querySelectorAll(`.nav-tab[data-tab="${tabName}"]`).forEach(activeBtn => {
-        const isDesktop = !activeBtn.closest('nav.md\\:hidden');
-        if (isDesktop) {
-            activeBtn.classList.remove('text-[var(--text-muted)]');
-            activeBtn.classList.add('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
-        } else {
-            activeBtn.classList.remove('text-[var(--text-muted)]');
+        activeBtn.classList.remove('text-[var(--text-muted)]');
+        if (activeBtn.closest('nav.md\\:hidden')) {
             activeBtn.classList.add('text-[var(--accent-cyan)]', 'font-extrabold');
+        } else {
+            activeBtn.classList.add('bg-[var(--accent-cyan)]', 'text-[#060913]', 'font-extrabold', 'shadow-[0_0_15px_rgba(0,240,255,0.35)]');
         }
     });
 
@@ -179,6 +188,8 @@ function setupEventListeners() {
 
     const btnVerify = document.getElementById('btnVerifyIdentity');
     if (btnVerify) btnVerify.addEventListener('click', verifyIdentity);
+
+    initShieldControls();
 }
 
 async function deployAgent() {
@@ -289,13 +300,13 @@ function renderDeployedAgent(data) {
     const widgetBox = document.getElementById('convaiWidgetContainer');
     if (widgetBox) {
         widgetBox.innerHTML = `
-            <div class="flex flex-col items-center justify-center p-5 sm:p-6 border border-cyan-400/25 rounded-2xl glass-panel-sub gap-3 text-center transition-all duration-300">
-                <div id="convaiStatusIcon" class="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-400/40 flex items-center justify-center text-[var(--accent-cyan)] shadow-glass-sm transition-all duration-300">
+            <div class="flex flex-col items-center justify-center p-6 border border-[var(--accent-cyan)]/30 rounded-2xl bg-[#060913]/80 gap-3 text-center">
+                <div id="convaiStatusIcon" class="w-12 h-12 rounded-full bg-[var(--accent-cyan)]/15 border border-[var(--accent-cyan)] flex items-center justify-center text-[var(--accent-cyan)] transition-all">
                     <span class="material-symbols-outlined text-3xl">mic</span>
                 </div>
                 <div id="convaiSessionTitle" class="text-sm font-mono font-bold text-[var(--text-primary)]">ElevenLabs ConvAI Session Ready</div>
-                <div id="convaiSessionDesc" class="text-xs font-mono text-[var(--text-muted)] text-center max-w-sm leading-relaxed">Agent is active with live speech capabilities. Click below to start full-duplex microphone stream.</div>
-                <button id="btnStartTalkSession" type="button" class="min-h-[44px] px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-300 hover:from-white hover:to-cyan-200 text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 transition-spring shadow-[0_0_15px_rgba(0,240,255,0.35)] cursor-pointer active:scale-95">
+                <div id="convaiSessionDesc" class="text-xs font-mono text-[var(--text-muted)] text-center max-w-sm">Agent is active with live speech capabilities. Click below to start real-time microphone stream.</div>
+                <button id="btnStartTalkSession" type="button" class="px-5 py-2.5 rounded-xl bg-[var(--accent-cyan)] text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 hover:bg-white transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] cursor-pointer">
                     <span class="material-symbols-outlined text-lg">support_agent</span>
                     <span id="btnStartTalkSessionText">START CONVAI VOICE SESSION</span>
                 </button>
@@ -812,61 +823,643 @@ function escapeHtml(str) {
 }
 
 // ── 3. LIVE CALL DEFENSE SHIELD & INTERCEPTOR (PPT SLIDE 4 & 7) ───────────────
+
+// ── Fraud & Vishing Keyword Dictionary (Scribe STT Scam Radar) ───────────────
+const FRAUD_TRIGGERS = [
+    { pattern: /\b(otp|one[- ]time[- ]password|cvv|pin|passcode|secret[- ]code)\b/gi, category: "OTP / Credential Theft", weight: 35, color: "crimson" },
+    { pattern: /\b(kyc|bank account|account block|freeze|unfreeze|pan card|aadhaar|debit card|credit card)\b/gi, category: "Banking / KYC Fraud", weight: 30, color: "crimson" },
+    { pattern: /\b(cbi|police|daroga|thana|customs|crime branch|cyber crime|narcotics|ed officer|interpol|inspector|magistrate)\b/gi, category: "Authority Impersonation", weight: 35, color: "crimson" },
+    { pattern: /\b(digital arrest|arrest warrant|court order|warrant|custody|fir|jail|legal action)\b/gi, category: "Coercion / Digital Arrest", weight: 40, color: "crimson" },
+    { pattern: /\b(transfer|send money|deposit|fee|penalty|charges|refund|upi|gpay|phonepe|paytm|bhejo|paise)\b/gi, category: "Financial Transfer", weight: 25, color: "crimson" },
+    { pattern: /\b(urgent|immediately|right now|turant|jaldi|abhi|last chance|warna|nahi toh)\b/gi, category: "Manufactured Urgency", weight: 20, color: "amber" },
+    { pattern: /\b(accident|hospital|icu|operation|blood|emergency|kidnap|ransom)\b/gi, category: "Fake Emergency", weight: 35, color: "crimson" }
+];
+
+// ── Audio Encoding & Feature Extraction ──────────────────────────────────────
+function encodeWav(samples, sampleRate = 16000) {
+    try {
+        const numSamples = samples.length;
+        const buffer = new ArrayBuffer(44 + numSamples * 2);
+        const view = new DataView(buffer);
+
+        function writeString(offset, str) {
+            for (let i = 0; i < str.length; i++) {
+                view.setUint8(offset + i, str.charCodeAt(i));
+            }
+        }
+
+        // RIFF chunk descriptor
+        writeString(0, 'RIFF');
+        view.setUint32(4, 36 + numSamples * 2, true);
+        writeString(8, 'WAVE');
+
+        // fmt sub-chunk
+        writeString(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true); // Raw PCM
+        view.setUint16(22, 1, true); // Mono
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+
+        // data sub-chunk
+        writeString(36, 'data');
+        view.setUint32(40, numSamples * 2, true);
+
+        let offset = 44;
+        for (let i = 0; i < numSamples; i++) {
+            const s = Math.max(-1, Math.min(1, samples[i]));
+            view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+            offset += 2;
+        }
+
+        return new Blob([buffer], { type: 'audio/wav' });
+    } catch (e) {
+        console.error("WAV encoding error:", e);
+        return new Blob([], { type: 'audio/wav' });
+    }
+}
+
+function computeJitter(samples, sampleRate = 16000) {
+    try {
+        if (!samples || samples.length < 4000) return 1.45;
+        const frameCount = 4;
+        const frameSize = Math.floor(samples.length / frameCount);
+        const minLag = Math.max(2, Math.floor(sampleRate / 400));
+        const maxLag = Math.min(frameSize - 2, Math.floor(sampleRate / 65));
+        const f0s = [];
+
+        for (let f = 0; f < frameCount; f++) {
+            const start = f * frameSize;
+            const end = (f + 1) * frameSize;
+            const frame = samples.subarray ? samples.subarray(start, end) : samples.slice(start, end);
+
+            let energy = 0;
+            for (let i = 0; i < frame.length; i++) energy += frame[i] * frame[i];
+            const rms = Math.sqrt(energy / frame.length);
+            if (rms < 0.012) continue; // Unvoiced / silence
+
+            let bestLag = -1;
+            let maxCorr = 0;
+            for (let lag = minLag; lag <= maxLag; lag++) {
+                let corr = 0;
+                const limit = frame.length - lag;
+                for (let j = 0; j < limit; j++) {
+                    corr += frame[j] * frame[j + lag];
+                }
+                if (corr > maxCorr) {
+                    maxCorr = corr;
+                    bestLag = lag;
+                }
+            }
+
+            if (bestLag > 0 && maxCorr > (energy * 0.25)) {
+                const f0 = sampleRate / bestLag;
+                if (f0 >= 65 && f0 <= 400) {
+                    f0s.push(f0);
+                }
+            }
+        }
+
+        if (f0s.length >= 2) {
+            let sumDiff = 0;
+            let sumF0 = 0;
+            for (let k = 1; k < f0s.length; k++) {
+                sumDiff += Math.abs(f0s[k] - f0s[k - 1]);
+                sumF0 += f0s[k];
+            }
+            sumF0 += f0s[0];
+            const meanF0 = sumF0 / f0s.length;
+            if (meanF0 > 50) {
+                const jitterPct = ((sumDiff / (f0s.length - 1)) / meanF0) * 100.0;
+                return Math.min(8.0, Math.max(0.12, jitterPct));
+            }
+        }
+        return 1.45;
+    } catch (e) {
+        return 1.45;
+    }
+}
+
+function computeSpectralFlatness(analyser, sampleRate = 48000) {
+    try {
+        if (!analyser) return 0.14;
+        const binCount = analyser.frequencyBinCount;
+        const freqData = new Float32Array(binCount);
+        analyser.getFloatFrequencyData(freqData);
+
+        const binHz = (sampleRate / 2) / binCount;
+        const startBin = Math.max(0, Math.floor(2500 / binHz));
+        const endBin = Math.min(binCount - 1, Math.floor(6000 / binHz));
+        const count = endBin - startBin + 1;
+        if (count <= 0) return 0.14;
+
+        let sumLog = 0;
+        let sumLin = 0;
+        for (let i = startBin; i <= endBin; i++) {
+            let val = freqData[i];
+            if (!isFinite(val) || isNaN(val)) val = -100;
+            const db = Math.max(-100, Math.min(0, val));
+            const pwr = Math.pow(10, db / 10) + 1e-12;
+            sumLog += Math.log(pwr);
+            sumLin += pwr;
+        }
+        const geomMean = Math.exp(sumLog / count);
+        const arithMean = sumLin / count;
+        if (arithMean <= 1e-9 || isNaN(arithMean) || isNaN(geomMean)) return 0.08;
+        const flatness = Math.min(1.0, Math.max(0.02, geomMean / arithMean));
+        return isNaN(flatness) ? 0.14 : flatness;
+    } catch (e) {
+        return 0.14;
+    }
+}
+
+// ── Live Speech-to-Text (STT) & Dynamic Transcript Feed ───────────────────────
+function startLiveSTT() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const feed = document.getElementById('liveTranscriptFeed');
+    const badge = document.getElementById('sttStatusBadge');
+
+    if (!SpeechRec) {
+        if (feed) feed.innerHTML = '<span class="text-[var(--text-muted)] italic">[Notice] Web Speech API not supported in this browser. Live STT requires Chrome or Edge.</span>';
+        if (badge) badge.textContent = "STT NOT SUPPORTED";
+        return;
+    }
+
+    try {
+        const rec = new SpeechRec();
+        rec.continuous = true;
+        rec.interimResults = true;
+        rec.lang = 'en-IN';
+
+        state.shieldTranscriptLines = [];
+        state.shieldActiveInterim = "";
+
+        rec.onstart = () => {
+            if (badge) {
+                badge.innerHTML = '<span class="text-[var(--accent-emerald)] font-bold animate-pulse">● LISTENING LIVE (en-IN)</span>';
+            }
+            if (feed && state.shieldTranscriptLines.length === 0) {
+                feed.innerHTML = '<span class="text-[var(--accent-cyan)] animate-pulse">Listening... speak into your microphone to view live transcript.</span>';
+            }
+        };
+
+        rec.onresult = (ev) => {
+            if (!state.shieldActive) return;
+            let interim = '';
+            for (let i = ev.resultIndex; i < ev.results.length; i++) {
+                const res = ev.results[i];
+                const text = res[0] ? res[0].transcript : '';
+                if (res.isFinal) {
+                    if (text.trim()) {
+                        state.shieldTranscriptLines.push(text.trim());
+                    }
+                } else {
+                    interim += text;
+                }
+            }
+            state.shieldActiveInterim = interim;
+            renderTranscriptAndScore();
+        };
+
+        rec.onerror = (e) => {
+            console.debug("Live STT notice:", e.error);
+        };
+
+        rec.onend = () => {
+            // Keep STT alive as long as live defense is active
+            if (state.shieldActive) {
+                try { rec.start(); } catch (err) {}
+            } else {
+                if (badge) badge.textContent = "STANDBY";
+            }
+        };
+
+        rec.start();
+        state.shieldSpeechRec = rec;
+    } catch (err) {
+        console.warn("Live STT initialization error:", err);
+    }
+}
+
+function stopLiveSTT() {
+    if (state.shieldSpeechRec) {
+        try {
+            state.shieldSpeechRec.onend = null;
+            state.shieldSpeechRec.abort();
+        } catch (e) {}
+        state.shieldSpeechRec = null;
+    }
+    const badge = document.getElementById('sttStatusBadge');
+    if (badge) badge.textContent = "STANDBY";
+}
+
+function renderTranscriptAndScore() {
+    const feed = document.getElementById('liveTranscriptFeed');
+    const allText = state.shieldTranscriptLines.concat([state.shieldActiveInterim]).join(' ').trim();
+    if (!feed) return;
+    if (!allText) {
+        feed.innerHTML = '<span class="text-[var(--text-muted)] italic">Awaiting speech... speak into microphone.</span>';
+        return;
+    }
+
+    // 1. Scan for fraud triggers
+    let rawScore = 0;
+    const matchedCategories = new Set();
+    const matchedWords = [];
+
+    FRAUD_TRIGGERS.forEach(t => {
+        const matches = allText.match(t.pattern);
+        if (matches) {
+            matchedCategories.add(t.category);
+            matches.forEach(m => matchedWords.push(m.toLowerCase()));
+            rawScore += t.weight + (matches.length - 1) * 8;
+        }
+    });
+
+    if (matchedCategories.has("Manufactured Urgency") && matchedCategories.size > 1) {
+        rawScore += 25;
+    }
+
+    const scamScore = Math.min(90, Math.max(0, rawScore));
+    state.shieldScamScore = scamScore;
+
+    const scamVal = document.getElementById('valScamScore');
+    if (scamVal) {
+        scamVal.textContent = `${scamScore}%`;
+        if (scamScore >= 40) {
+            scamVal.className = "text-lg font-bold text-[var(--accent-crimson)] animate-pulse";
+        } else {
+            scamVal.className = "text-lg font-bold text-white";
+        }
+    }
+
+    if (scamScore >= 40 && matchedWords.length > 0) {
+        logActivity(`[SCAM RADAR] Scribe STT detected high-risk keywords: [${[...new Set(matchedWords)].join(', ')}] · Scam Score: ${scamScore}%`);
+    }
+
+    // 2. Render with color highlights
+    let highlightedHtml = escapeHtml(allText);
+    FRAUD_TRIGGERS.forEach(t => {
+        highlightedHtml = highlightedHtml.replace(t.pattern, (match) => {
+            const isAmber = t.color === "amber";
+            const bgClass = isAmber ? "bg-amber-500/30 text-amber-300 border-amber-500/50" : "bg-red-500/30 text-red-300 border-red-500/50";
+            return `<mark class="${bgClass} font-extrabold px-1.5 py-0.5 rounded border inline-block my-0.5">${match}</mark>`;
+        });
+    });
+
+    feed.innerHTML = highlightedHtml;
+    feed.scrollTop = feed.scrollHeight;
+}
+
+// ── Tab 2 Controls Initialization & Toggle ───────────────────────────────────
+function initShieldControls() {
+    let btnLive = document.getElementById('btnToggleLiveDefense');
+    if (!btnLive) {
+        const parent = document.getElementById('btnTestReal')?.parentElement;
+        if (parent) {
+            btnLive = document.createElement('button');
+            btnLive.id = 'btnToggleLiveDefense';
+            btnLive.type = 'button';
+            btnLive.className = 'px-4 py-2.5 rounded-xl bg-[var(--accent-cyan)] hover:bg-white text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-[0_0_15px_rgba(0,240,255,0.4)]';
+            btnLive.innerHTML = `
+                <span class="material-symbols-outlined text-base">mic</span>
+                <span id="btnToggleLiveDefenseText">🎙️ START LIVE DEFENSE MONITOR</span>
+            `;
+            parent.insertBefore(btnLive, parent.firstChild);
+        }
+    }
+    if (btnLive) {
+        btnLive.onclick = toggleLiveDefense;
+    }
+}
+
+async function toggleLiveDefense() {
+    if (state.shieldActive) {
+        stopLiveDefense();
+    } else {
+        await startLiveDefense();
+    }
+}
+
+async function startLiveDefense() {
+    const btn = document.getElementById('btnToggleLiveDefense');
+    const btnText = document.getElementById('btnToggleLiveDefenseText');
+
+    logActivity("[LIVE DEFENSE] Requesting microphone access for continuous PyTorch MelCNN monitoring...");
+
+    try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error("navigator.mediaDevices.getUserMedia is not supported in this browser context (requires HTTPS or localhost).");
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        state.shieldMicStream = stream;
+
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContextClass();
+        state.shieldAudioContext = audioCtx;
+        window._shieldAudioContext = audioCtx; // prevent GC
+
+        if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+        }
+
+        const source = audioCtx.createMediaStreamSource(stream);
+        state.shieldMicSource = source;
+
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.8;
+        state.shieldAnalyser = analyser;
+        source.connect(analyser);
+
+        const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+        state.shieldProcessor = processor;
+        window._shieldProcessor = processor; // prevent GC
+
+        const muteGain = audioCtx.createGain();
+        muteGain.gain.value = 0.0;
+        state.shieldMuteGain = muteGain;
+
+        source.connect(processor);
+        processor.connect(muteGain);
+        muteGain.connect(audioCtx.destination);
+
+        state.shieldPcmChunks = [];
+        state.shieldPcmLength = 0;
+        state.shieldActive = true;
+        state.isCallActive = true;
+        state.shieldConsecutiveHigh = 0;
+        state.shieldIsScoring = false;
+
+        const inputSampleRate = audioCtx.sampleRate;
+        const targetSampleRate = 16000;
+
+        processor.onaudioprocess = (e) => {
+            try {
+                if (!state.shieldActive) return;
+                const inputData = e.inputBuffer.getChannelData(0);
+                if (!inputData || inputData.length === 0) return;
+
+                const downsampled = resampleAudio(inputData, inputSampleRate, targetSampleRate);
+                if (!downsampled || downsampled.length === 0) return;
+
+                state.shieldPcmChunks.push(downsampled);
+                state.shieldPcmLength += downsampled.length;
+
+                // Buffer audio while previous scoring request is in-flight (up to 32k samples)
+                if (state.shieldIsScoring) {
+                    while (state.shieldPcmLength > 32000 && state.shieldPcmChunks.length > 0) {
+                        const dropped = state.shieldPcmChunks.shift();
+                        state.shieldPcmLength -= dropped.length;
+                    }
+                    return;
+                }
+
+                // When at least 1.0 second (16,000 samples) has accumulated and no fetch is in-flight
+                if (state.shieldPcmLength >= 16000) {
+                    const windowChunk = new Float32Array(16000);
+                    let copied = 0;
+                    let chunkIdx = 0;
+                    while (copied < 16000 && chunkIdx < state.shieldPcmChunks.length) {
+                        const c = state.shieldPcmChunks[chunkIdx];
+                        const needed = 16000 - copied;
+                        if (c.length <= needed) {
+                            windowChunk.set(c, copied);
+                            copied += c.length;
+                            chunkIdx++;
+                        } else {
+                            windowChunk.set(c.subarray(0, needed), copied);
+                            copied += needed;
+                            break;
+                        }
+                    }
+
+                    // Advance buffer by 8,000 samples (0.5s hop)
+                    let toDrop = 8000;
+                    while (toDrop > 0 && state.shieldPcmChunks.length > 0) {
+                        if (state.shieldPcmChunks[0].length <= toDrop) {
+                            toDrop -= state.shieldPcmChunks[0].length;
+                            state.shieldPcmLength -= state.shieldPcmChunks[0].length;
+                            state.shieldPcmChunks.shift();
+                        } else {
+                            state.shieldPcmChunks[0] = state.shieldPcmChunks[0].subarray(toDrop);
+                            state.shieldPcmLength -= toDrop;
+                            toDrop = 0;
+                        }
+                    }
+
+                    const jitter = computeJitter(windowChunk, 16000);
+                    const flatness = computeSpectralFlatness(state.shieldAnalyser, inputSampleRate);
+
+                    dispatchWindowToMelCnn(windowChunk, jitter, flatness);
+                }
+            } catch (procErr) {
+                console.error("Audio processing frame error:", procErr);
+            }
+        };
+
+        // Start Live Speech Recognition (STT)
+        startLiveSTT();
+
+        // Update button UI
+        if (btn) {
+            btn.className = "px-4 py-2.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-pulse";
+            if (btnText) btnText.textContent = "⏹ STOP DEFENSE MONITOR";
+        }
+
+        const telStatus = document.getElementById('telecomStreamStatus');
+        if (telStatus) telStatus.textContent = "Telecom Stream: Live Mic Ingestion (16 kHz / Mono)";
+
+        logActivity("[LIVE DEFENSE ACTIVE] Microphone connected! Ingesting 16kHz audio into 1.0s sliding windows (0.5s hop) dispatched to /api/score.");
+    } catch (err) {
+        logActivity(`[LIVE DEFENSE ERROR] Failed to start microphone monitor: ${err.message || err}`);
+        stopLiveDefense();
+    }
+}
+
+function stopLiveDefense() {
+    state.shieldActive = false;
+    if (state.shieldMicStream) {
+        try {
+            state.shieldMicStream.getTracks().forEach(track => track.stop());
+        } catch (e) {}
+        state.shieldMicStream = null;
+    }
+
+    if (state.shieldProcessor) {
+        try { state.shieldProcessor.disconnect(); } catch (e) {}
+        state.shieldProcessor = null;
+    }
+    if (state.shieldMicSource) {
+        try { state.shieldMicSource.disconnect(); } catch (e) {}
+        state.shieldMicSource = null;
+    }
+    if (state.shieldAnalyser) {
+        try { state.shieldAnalyser.disconnect(); } catch (e) {}
+        state.shieldAnalyser = null;
+    }
+    if (state.shieldMuteGain) {
+        try { state.shieldMuteGain.disconnect(); } catch (e) {}
+        state.shieldMuteGain = null;
+    }
+    if (state.shieldAudioContext) {
+        try {
+            if (state.shieldAudioContext.state !== 'closed') {
+                state.shieldAudioContext.close().catch(() => {});
+            }
+        } catch (e) {}
+        state.shieldAudioContext = null;
+    }
+
+    stopLiveSTT();
+    state.shieldPcmChunks = [];
+    state.shieldPcmLength = 0;
+    state.shieldIsScoring = false;
+
+    // Reset button UI
+    const btn = document.getElementById('btnToggleLiveDefense');
+    const btnText = document.getElementById('btnToggleLiveDefenseText');
+    if (btn) {
+        btn.className = "px-4 py-2.5 rounded-xl bg-[var(--accent-cyan)] hover:bg-white text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer active:scale-95 shadow-[0_0_15px_rgba(0,240,255,0.4)]";
+        if (btnText) btnText.textContent = "🎙️ START LIVE DEFENSE MONITOR";
+    }
+
+    const telStatus = document.getElementById('telecomStreamStatus');
+    if (telStatus) telStatus.textContent = "Telecom Stream: Audio Ingest Active";
+
+    logActivity("[LIVE DEFENSE STOPPED] Live defense monitor stopped. Microphone released.");
+}
+
+async function dispatchWindowToMelCnn(chunk16k, jitter, flatness) {
+    if (state.shieldIsScoring) return;
+    state.shieldIsScoring = true;
+
+    const t0 = performance.now();
+    try {
+        const wavBlob = encodeWav(chunk16k, 16000);
+        const res = await fetch('/api/score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'audio/wav' },
+            body: wavBlob
+        });
+
+        if (!res.ok) {
+            console.warn(`[MelCNN] Backend error HTTP ${res.status}`);
+            return;
+        }
+
+        const data = await res.json();
+        const elapsedMs = Math.round(performance.now() - t0);
+
+        if (data.error) {
+            console.debug("[MelCNN notice]", data.error);
+            return;
+        }
+
+        const p = data.call_p !== undefined ? data.call_p : (data.window_p !== undefined ? data.window_p : 0);
+        const deepfakeScore = Math.round(p * 100);
+        state.lastDeepfakeScore = deepfakeScore;
+
+        updateGauges({
+            deepfake: deepfakeScore,
+            jitter: jitter,
+            flatness: flatness,
+            scamScore: state.shieldScamScore || 0,
+            tier: data.tier,
+            latency: elapsedMs,
+            action: data.action,
+            ui: data.ui
+        });
+
+        logActivity(`[MELCNN LIVE] Window #${data.n_windows || 1} | Deepfake: ${deepfakeScore}% | Tier: ${data.tier} | Jitter: ${jitter.toFixed(2)}% | Flatness: ${flatness.toFixed(2)} | Latency: ${elapsedMs}ms`);
+
+        if (deepfakeScore > 75 || data.tier === "HIGH" || data.tier === "HIGH_RISK" || data.tier === "INTERCEPT") {
+            state.shieldConsecutiveHigh++;
+            if (state.shieldConsecutiveHigh >= 2) {
+                logActivity(`[CRITICAL ALERT] Consecutive high synthetic score (${deepfakeScore}%)! Immediate Flash v2.5 voice intercept dispatched.`);
+                triggerInterceptorModal();
+            }
+        } else {
+            state.shieldConsecutiveHigh = 0;
+        }
+    } catch (err) {
+        // Catch fetch errors silently so network drops or backend timeouts do not stop the microphone loop
+        console.warn("[MelCNN network notice]", err.message || err);
+    } finally {
+        state.shieldIsScoring = false;
+    }
+}
+
+// ── 60 FPS Oscilloscope Waveform Visualizer ──────────────────────────────────
 function initVisualizer() {
     const canvas = document.getElementById('waveCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // High-DPI Retina scaling
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    const displayWidth = rect.width || 400;
-    const displayHeight = rect.height || 70;
-    canvas.width = displayWidth * dpr;
-    canvas.height = displayHeight * dpr;
-    ctx.scale(dpr, dpr);
-
     let phase = 0;
     function renderWave() {
-        ctx.clearRect(0, 0, displayWidth, displayHeight);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        ctx.lineWidth = 2.2;
-        const isAnyActive = state.isCallActive || state.convaiSessionActive;
-        
-        // Dynamic gradient stroke
-        const grad = ctx.createLinearGradient(0, 0, displayWidth, 0);
-        if (isAnyActive) {
-            grad.addColorStop(0, '#00F0FF');
-            grad.addColorStop(0.5, '#06B6D4');
-            grad.addColorStop(1, '#10B981');
+        if (state.shieldActive && state.shieldAnalyser) {
+            // Real-time oscilloscope from live microphone
+            const timeData = new Uint8Array(state.shieldAnalyser.fftSize);
+            state.shieldAnalyser.getByteTimeDomainData(timeData);
+
+            ctx.lineWidth = 2.2;
+            const isHighRisk = (state.lastDeepfakeScore || 0) > 75;
+            ctx.strokeStyle = isHighRisk ? '#EF4444' : '#00F0FF';
+            ctx.beginPath();
+
+            const sliceWidth = canvas.width / timeData.length;
+            let x = 0;
+            for (let i = 0; i < timeData.length; i++) {
+                const v = timeData[i] / 128.0;
+                const y = (v * canvas.height) / 2;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+                x += sliceWidth;
+            }
+            ctx.stroke();
         } else {
-            grad.addColorStop(0, 'rgba(148, 163, 184, 0.25)');
-            grad.addColorStop(0.5, 'rgba(148, 163, 184, 0.45)');
-            grad.addColorStop(1, 'rgba(148, 163, 184, 0.25)');
+            // Synthetic wave animation for offline simulations and standby
+            ctx.lineWidth = 2.5;
+            const isAnyActive = state.isCallActive || state.convaiSessionActive;
+            ctx.strokeStyle = isAnyActive ? '#00F0FF' : 'rgba(148, 163, 184, 0.3)';
+            ctx.beginPath();
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const mid = height / 2;
+            const freq = isAnyActive ? 0.05 : 0.015;
+            const amp = isAnyActive ? 22 : 4;
+
+            for (let x = 0; x < width; x++) {
+                const y = mid + Math.sin(x * freq + phase) * amp * Math.sin(x * 0.01);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            phase += isAnyActive ? 0.08 : 0.02;
         }
-        ctx.strokeStyle = grad;
-        ctx.beginPath();
 
-        const mid = displayHeight / 2;
-        const freq = isAnyActive ? 0.05 : 0.015;
-        const amp = isAnyActive ? 20 : 4;
-
-        for (let x = 0; x < displayWidth; x++) {
-            const y = mid + Math.sin(x * freq + phase) * amp * Math.sin(x * 0.012);
-            if (x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-
-        phase += isAnyActive ? 0.08 : 0.02;
         state.canvasAnimationId = requestAnimationFrame(renderWave);
     }
     renderWave();
 }
 
+// ── Offline Simulation Presets (Judge Testing Fail-Safes) ─────────────────────
 function runRealTest() {
+    if (state.shieldActive) stopLiveDefense();
     state.isCallActive = true;
     logActivity("[LIVE CALL INGESTION] Caller (+91 98765 43210) stream received. Feeding 1-second sliding windows into MelCNN & Scribe STT...");
+
+    const feed = document.getElementById('liveTranscriptFeed');
+    if (feed) {
+        feed.innerHTML = `<span class="text-white font-semibold">Namaste, this is State Bank of India customer care representative calling to verify your recent branch query. No OTP or passwords requested.</span>`;
+    }
 
     // Update Telemetry Gauges to SAFE values
     updateGauges({
@@ -883,8 +1476,14 @@ function runRealTest() {
 }
 
 function runCloneAttack() {
+    if (state.shieldActive) stopLiveDefense();
     state.isCallActive = true;
     logActivity("[ALERT] High-risk audio chunk detected! Ingesting 1-second window into 236k-parameter MelCNN...");
+
+    const feed = document.getElementById('liveTranscriptFeed');
+    if (feed) {
+        feed.innerHTML = `<span class="text-white font-semibold"><mark class="bg-red-500/30 text-red-300 font-extrabold px-1.5 py-0.5 rounded border border-red-500/50">CBI Officer</mark> speaking from <mark class="bg-red-500/30 text-red-300 font-extrabold px-1.5 py-0.5 rounded border border-red-500/50">police station</mark>. An <mark class="bg-red-500/30 text-red-300 font-extrabold px-1.5 py-0.5 rounded border border-red-500/50">arrest warrant</mark> has been issued. Share your <mark class="bg-red-500/30 text-red-300 font-extrabold px-1.5 py-0.5 rounded border border-red-500/50">OTP</mark> and <mark class="bg-red-500/30 text-red-300 font-extrabold px-1.5 py-0.5 rounded border border-red-500/50">transfer</mark> funds <mark class="bg-amber-500/30 text-amber-300 font-extrabold px-1.5 py-0.5 rounded border border-amber-500/50">immediately</mark> or face <mark class="bg-red-500/30 text-red-300 font-extrabold px-1.5 py-0.5 rounded border border-red-500/50">digital arrest</mark>!</span>`;
+    }
 
     // Update Telemetry Gauges to ATTACK values
     updateGauges({
@@ -904,13 +1503,14 @@ function runCloneAttack() {
 }
 
 function updateGauges(data) {
-    // Deepfake score
+    // 1. Deepfake probability
     const bar = document.getElementById('deepfakeProgressBar');
     const badge = document.getElementById('deepfakeScoreBadge');
     if (bar && badge) {
-        bar.style.width = `${data.deepfake}%`;
-        badge.textContent = `${data.deepfake}%`;
-        if (data.deepfake > 75) {
+        const score = Math.max(0, Math.min(100, Math.round(data.deepfake || 0)));
+        bar.style.width = `${score}%`;
+        badge.textContent = `${score}%`;
+        if (score > 75) {
             bar.className = "h-full bg-[var(--accent-crimson)] transition-all duration-300";
             badge.className = "text-sm font-mono font-extrabold text-[var(--accent-crimson)]";
         } else {
@@ -919,30 +1519,80 @@ function updateGauges(data) {
         }
     }
 
-    // Jitter & Flatness
+    // 2. Pitch Micro-Jitter
     const jitterVal = document.getElementById('valJitter');
-    if (jitterVal) jitterVal.textContent = `${data.jitter}%`;
+    if (jitterVal) {
+        const j = typeof data.jitter === 'number' ? data.jitter : parseFloat(data.jitter || 0);
+        jitterVal.textContent = isNaN(j) ? "1.45%" : `${j.toFixed(2)}%`;
+        if (j < 0.40 && (data.deepfake || 0) > 50) {
+            jitterVal.className = "text-lg font-bold text-[var(--accent-crimson)]";
+        } else {
+            jitterVal.className = "text-lg font-bold text-white";
+        }
+    }
 
+    // 3. Mid-Spectral Flatness
     const flatnessVal = document.getElementById('valFlatness');
-    if (flatnessVal) flatnessVal.textContent = data.flatness.toFixed(2);
+    if (flatnessVal) {
+        const f = typeof data.flatness === 'number' ? data.flatness : parseFloat(data.flatness || 0);
+        flatnessVal.textContent = isNaN(f) ? "0.14" : f.toFixed(2);
+        if (f > 0.35 && (data.deepfake || 0) > 50) {
+            flatnessVal.className = "text-lg font-bold text-[var(--accent-crimson)]";
+        } else {
+            flatnessVal.className = "text-lg font-bold text-white";
+        }
+    }
 
+    // 4. Scribe STT Scam Score
     const scamVal = document.getElementById('valScamScore');
-    if (scamVal) scamVal.textContent = `${data.scamScore}%`;
+    if (scamVal) {
+        const s = typeof data.scamScore === 'number' ? data.scamScore : parseInt(data.scamScore || 0);
+        scamVal.textContent = `${s}%`;
+        if (s >= 40) {
+            scamVal.className = "text-lg font-bold text-[var(--accent-crimson)] animate-pulse";
+        } else {
+            scamVal.className = "text-lg font-bold text-white";
+        }
+    }
 
-    // Decision Strip
+    // 5. Decision Strip
     const strip = document.getElementById('decisionStrip');
     if (strip) {
-        if (data.tier === "INTERCEPT") {
+        if (data.tier === "INTERCEPT" || data.tier === "HIGH" || data.tier === "HIGH_RISK" || data.deepfake > 75) {
             strip.className = "p-4 rounded-2xl bg-[var(--accent-crimson)]/20 border-2 border-[var(--accent-crimson)] flex items-center justify-between text-[var(--accent-crimson)] font-mono animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.35)]";
             strip.innerHTML = `
                 <div class="flex items-center gap-2.5">
                     <span class="material-symbols-outlined text-3xl">gpp_bad</span>
                     <div>
-                        <div class="font-extrabold text-sm sm:text-base">🔴 INTERCEPT: SYNTHETIC AI VOICE CLONE</div>
-                        <div class="text-xs opacity-90">High-risk action pattern detected · Call held by Dhwani Kavach Shield</div>
+                        <div class="font-extrabold text-sm sm:text-base">🔴 INTERCEPT: SYNTHETIC AI VOICE CLONE (${data.deepfake}%)</div>
+                        <div class="text-xs opacity-90">${data.ui || "High-risk neural vocoder pattern detected · Call held by Dhwani Kavach Shield"}</div>
                     </div>
                 </div>
                 <span class="px-3 py-1 rounded-md bg-[var(--accent-crimson)] text-white text-xs font-black">HIGH RISK</span>
+            `;
+        } else if (data.tier === "INSUFFICIENT_AUDIO") {
+            strip.className = "p-4 rounded-2xl bg-[var(--bg-card-sub)] border border-[var(--accent-cyan)]/40 flex items-center justify-between text-[var(--text-muted)] font-mono";
+            strip.innerHTML = `
+                <div class="flex items-center gap-2.5">
+                    <span class="material-symbols-outlined text-3xl text-[var(--accent-cyan)] animate-pulse">hearing</span>
+                    <div>
+                        <div class="font-extrabold text-sm text-[var(--text-primary)]">LISTENING FOR SPEECH</div>
+                        <div class="text-xs text-[var(--accent-cyan)]">1-second sliding windows buffering... speak to analyze</div>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded bg-[var(--accent-cyan)]/20 text-[var(--accent-cyan)] text-xs font-bold">BUFFERING</span>
+            `;
+        } else if (data.tier === "STANDBY") {
+            strip.className = "p-4 rounded-2xl bg-[#060913] border border-[var(--border-card)] text-[var(--text-muted)] font-mono flex items-center justify-between";
+            strip.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-2xl text-[var(--accent-cyan)]">shield</span>
+                    <div>
+                        <div class="font-extrabold text-sm text-[var(--text-primary)]">DHWANI KAVACH SHIELD ACTIVE</div>
+                        <div class="text-xs">Awaiting live audio stream or test trigger.</div>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded bg-[var(--accent-cyan)]/20 text-[var(--accent-cyan)] text-xs font-bold">READY</span>
             `;
         } else {
             strip.className = "p-4 rounded-2xl bg-[var(--accent-emerald)]/15 border-2 border-[var(--accent-emerald)]/60 flex items-center justify-between text-[var(--accent-emerald)] font-mono";
@@ -950,8 +1600,8 @@ function updateGauges(data) {
                 <div class="flex items-center gap-2.5">
                     <span class="material-symbols-outlined text-3xl">verified_user</span>
                     <div>
-                        <div class="font-extrabold text-sm sm:text-base">🟢 ALLOW: AUTHENTIC HUMAN SPEECH</div>
-                        <div class="text-xs opacity-90">Natural vocal tract jitter verified · No deepfake or scam signatures</div>
+                        <div class="font-extrabold text-sm sm:text-base">🟢 ALLOW: AUTHENTIC HUMAN SPEECH (${data.deepfake}%)</div>
+                        <div class="text-xs opacity-90">${data.ui || "Natural vocal tract jitter verified · No deepfake or scam signatures"}</div>
                     </div>
                 </div>
                 <span class="px-3 py-1 rounded-md bg-[var(--accent-emerald)] text-[#060913] text-xs font-black">SAFE</span>
@@ -995,7 +1645,6 @@ async function triggerInterceptorModal() {
                 <span class="text-white font-bold">Playing Flash v2.5 Audio Intercept</span> · Latency: <span class="text-[var(--accent-cyan)] font-extrabold">${data.latency_ms} ms</span>
             `;
 
-            // Play synthesized audio
             if (state.alertAudioObj) state.alertAudioObj.pause();
             state.alertAudioObj = new Audio(`data:audio/wav;base64,${data.audio_base64}`);
             state.alertAudioObj.play().catch(e => console.log("Audio autoplay prevented:", e));
@@ -1050,9 +1699,16 @@ function closeInterceptorModal() {
 }
 
 function resetShield() {
+    if (state.shieldActive) stopLiveDefense();
     if (state.alertAudioObj) state.alertAudioObj.pause();
     closeInterceptorModal();
     state.isCallActive = false;
+
+    const feed = document.getElementById('liveTranscriptFeed');
+    if (feed) {
+        feed.innerHTML = '<span class="text-[var(--text-muted)] italic">Awaiting speech... speak into microphone to see real-time transcription.</span>';
+    }
+
     updateGauges({
         deepfake: 0,
         jitter: 0,
@@ -1078,4 +1734,3 @@ function resetShield() {
     }
     logActivity("[SYSTEM RESET] Security shield cleared. Ready for next evaluation.");
 }
-
