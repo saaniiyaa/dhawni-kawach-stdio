@@ -122,6 +122,16 @@ except Exception as _el_err:
     _ELEVENLABS_HOOKED = False
     print(f"[WARN] ElevenLabs Studio service not loaded: {_el_err}")
 
+# ── ArmorIQ Intent Assurance Guard (Runtime Governance & Cryptographic Tokens) ──
+try:
+    from services.armoriq_guard import armoriq
+    _ARMORIQ_HOOKED = True
+    print("[OK] ArmorIQ Intent Assurance loaded: cryptographic circuit-breaker active")
+except Exception as _aiq_err:
+    _ARMORIQ_HOOKED = False
+    print(f"[WARN] ArmorIQ Intent Assurance not loaded: {_aiq_err}")
+
+
 
 def score_audio(y):
     piece = fix_length(np.asarray(y, dtype=np.float32), int(SECONDS * SR))
@@ -392,6 +402,7 @@ def studio_intercept_alert():
     """
     Ultra-low latency security voice warning injection via Flash v2.5.
     PPT Slide 4, 5 & 7: Instant ElevenLabs voice warning + call termination.
+    Governed by ArmorIQ Intent Assurance cryptographic circuit-breaker.
     """
     if not _ELEVENLABS_HOOKED:
         return jsonify({"ok": False, "error": "ElevenLabs service not loaded"}), 503
@@ -402,10 +413,61 @@ def studio_intercept_alert():
             "Security Alert: Dhwani Kavach Shield has detected a synthetic voice clone and scam pattern. This call is placed on hold."
         )
         voice_id = data.get("voice_id")
+        action = data.get("action", "VOICE_INTERCEPT_ALERT")
+        risk_score = float(data.get("risk_score", 0.94))
+
+        # ArmorIQ Intent Assurance Verification
+        armoriq_intent_id = None
+        armoriq_verification = None
+        if _ARMORIQ_HOOKED:
+            armoriq_verification = armoriq.verify_action_intent(
+                action=action,
+                risk_score=risk_score,
+                context={"text": text, "voice_id": voice_id}
+            )
+            armoriq_intent_id = armoriq_verification.get("intent_id")
+            if not armoriq_verification.get("authorized", False):
+                return jsonify({
+                    "ok": False,
+                    "error": armoriq_verification.get("reason", "Action rejected by ArmorIQ policy"),
+                    "armoriq_intent_id": armoriq_intent_id,
+                    "armoriq_verification": armoriq_verification
+                }), 403
 
         res = elevenlabs_svc.generate_flash_intercept_alert(text=text, voice_id=voice_id)
         res["ok"] = res.get("success", False)
+        if armoriq_intent_id:
+            res["armoriq_intent_id"] = armoriq_intent_id
+        if armoriq_verification:
+            res["armoriq_verification"] = armoriq_verification
         return jsonify(res)
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/studio/armoriq/verify", methods=["POST"])
+def studio_armoriq_verify():
+    """Cryptographic action intent verification under ArmorIQ runtime policy."""
+    if not _ARMORIQ_HOOKED:
+        return jsonify({"ok": False, "error": "ArmorIQ guard service not loaded"}), 503
+    try:
+        data = request.get_json(silent=True) or {}
+        action = data.get("action", "TERMINATE_CALL")
+        risk_score = float(data.get("risk_score", 0.94))
+        context = data.get("context", {})
+        threshold = float(data.get("threshold", 0.75))
+        receipt = armoriq.verify_action_intent(
+            action=action,
+            risk_score=risk_score,
+            context=context,
+            threshold=threshold
+        )
+        return jsonify({
+            "ok": True,
+            "authorized": receipt.get("authorized", False),
+            "armoriq_intent_id": receipt.get("intent_id"),
+            "armoriq_verification": receipt
+        })
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
