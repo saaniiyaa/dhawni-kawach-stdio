@@ -685,7 +685,7 @@
         </button>
     </nav>
 
-    <!-- ── 4. AUTOMATED INTERCEPTOR MODAL (Slide 7 Replica) ─────────────────── -->
+    <!-- ── 4. AUTOMATED INTERCEPTOR MODAL (Slide 7 Replica + 2FA PIN Challenge) ─ -->
     <div id="interceptorBackdrop" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300"></div>
 
     <div id="interceptorModal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[480px] bg-[#070c18] border-2 border-[var(--accent-crimson)] rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.45)] z-50 p-6 sm:p-7 hidden opacity-0 scale-95 transition-all duration-300 flex flex-col items-center text-center gap-4">
@@ -696,10 +696,10 @@
         </div>
 
         <div>
-            <h3 class="font-mono font-black text-lg sm:text-xl text-[var(--accent-crimson)] uppercase tracking-wider">
+            <h3 id="interceptorTitle" class="font-mono font-black text-lg sm:text-xl text-[var(--accent-crimson)] uppercase tracking-wider">
                 SYNTHETIC AI VOICE CLONE DETECTED
             </h3>
-            <p class="font-mono text-xs text-[var(--text-muted)] mt-1.5 leading-relaxed">
+            <p id="interceptorSubtitle" class="font-mono text-xs text-[var(--text-muted)] mt-1.5 leading-relaxed">
                 High-risk action pattern detected · Call held by Dhwani Kavach Shield
             </p>
         </div>
@@ -708,6 +708,28 @@
         <div id="interceptorAudioStatus" class="w-full touch-target py-2.5 px-3.5 rounded-xl glass-card-sub border border-[var(--accent-crimson)]/40 flex items-center justify-center gap-2 text-xs font-mono text-[var(--text-muted)]">
             <span class="material-symbols-outlined text-base text-[var(--accent-crimson)] animate-bounce">volume_up</span>
             <span>Synthesizing Flash v2.5 Voice Warning...</span>
+        </div>
+
+        <!-- Out-of-Band Secondary Authentication Challenge Box (PIN: 582914) -->
+        <div id="verificationChallengeBox" class="w-full p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-left font-mono hidden flex-col gap-2 transition-all">
+            <div class="flex items-center justify-between text-xs text-amber-400 font-bold">
+                <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-base animate-pulse">lock</span>
+                    OUT-OF-BAND CHALLENGE ACTIVE
+                </span>
+                <span class="px-2 py-0.5 rounded bg-amber-500/20 text-[10px] font-mono text-amber-300">TELECOM SMS SENT</span>
+            </div>
+            <p class="text-[11px] text-[var(--text-muted)] leading-tight">
+                Secondary authentication challenge issued to verify genuine human caller identity.
+            </p>
+            <div class="p-2.5 rounded-xl bg-[#020409] border border-amber-500/30 flex items-center justify-between shadow-inner">
+                <span class="text-xs text-[var(--text-muted)]">Verification Challenge PIN:</span>
+                <span id="challengePinDisplay" class="text-base font-extrabold text-amber-300 tracking-widest font-mono">582914</span>
+            </div>
+            <div id="challengeStatusText" class="text-[11px] text-amber-300/90 italic flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-xs animate-spin">hourglass_top</span>
+                <span>Awaiting caller acoustic readback or dual-factor SMS confirmation...</span>
+            </div>
         </div>
 
         <!-- Action Buttons (Strictly 48px Minimum Touch Targets) -->
@@ -719,6 +741,10 @@
             <button id="btnVerifyIdentity" type="button" class="w-full touch-target py-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-400 font-mono font-extrabold text-xs uppercase tracking-wider spring-transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                 <span class="material-symbols-outlined text-lg">verified_user</span>
                 <span>VERIFY IDENTITY</span>
+            </button>
+            <button id="btnDismissModal" type="button" class="w-full touch-target py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[var(--text-muted)] hover:text-white font-mono font-bold text-xs uppercase tracking-wider spring-transition flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                <span class="material-symbols-outlined text-base">close</span>
+                <span>DISMISS / OPERATOR OVERRIDE</span>
             </button>
         </div>
     </div>

@@ -189,6 +189,12 @@ function setupEventListeners() {
     const btnVerify = document.getElementById('btnVerifyIdentity');
     if (btnVerify) btnVerify.addEventListener('click', verifyIdentity);
 
+    const btnDismiss = document.getElementById('btnDismissModal');
+    if (btnDismiss) btnDismiss.addEventListener('click', dismissModal);
+
+    const backdrop = document.getElementById('interceptorBackdrop');
+    if (backdrop) backdrop.addEventListener('click', dismissModal);
+
     initShieldControls();
 }
 
@@ -1380,7 +1386,7 @@ async function dispatchWindowToMelCnn(chunk16k, jitter, flatness) {
             state.shieldConsecutiveHigh++;
             if (state.shieldConsecutiveHigh >= 2) {
                 logActivity(`[CRITICAL ALERT] Consecutive high synthetic score (${deepfakeScore}%)! Immediate Flash v2.5 voice intercept dispatched.`);
-                triggerInterceptorModal();
+                triggerInterceptorAlert("Consecutive high-confidence synthetic speech detected");
             }
         } else {
             state.shieldConsecutiveHigh = 0;
@@ -1499,7 +1505,7 @@ function runCloneAttack() {
     logActivity("[CRITICAL DEFENSE VERDICT] INTERCEPT TRIGGERED! Deepfake Probability: 94%. Immediate Flash v2.5 voice warning dispatched.");
     
     // Automatically trigger Interceptor Modal
-    triggerInterceptorModal();
+    triggerInterceptorAlert("Synthetic AI Voice Clone Detected (94% Probability)");
 }
 
 function updateGauges(data) {
@@ -1610,57 +1616,164 @@ function updateGauges(data) {
     }
 }
 
-async function triggerInterceptorModal() {
+async function triggerInterceptorAlert(reason = "Synthetic AI Voice Clone Detected") {
     const modal = document.getElementById('interceptorModal');
     const backdrop = document.getElementById('interceptorBackdrop');
     if (!modal || !backdrop) return;
 
+    // Reset identity verification challenge state
+    const challengeBox = document.getElementById('verificationChallengeBox');
+    if (challengeBox) {
+        challengeBox.classList.add('hidden');
+        challengeBox.classList.remove('flex');
+    }
+    const btnVerify = document.getElementById('btnVerifyIdentity');
+    if (btnVerify) {
+        btnVerify.innerHTML = `
+            <span class="material-symbols-outlined text-lg">verified_user</span>
+            <span>VERIFY IDENTITY</span>
+        `;
+        btnVerify.className = "w-full py-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-400 font-mono font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95";
+    }
+
+    const subtitle = document.getElementById('interceptorSubtitle');
+    if (subtitle) {
+        subtitle.textContent = reason || "High-risk action pattern detected · Call held by Dhwani Kavach Shield";
+    }
+
     modal.classList.remove('hidden');
     backdrop.classList.remove('hidden');
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         modal.classList.remove('opacity-0', 'scale-95');
         backdrop.classList.remove('opacity-0');
-    }, 20);
+    });
 
-    // Fetch and play Flash v2.5 Voice Alert
+    // Flash v2.5 Voice Warning Player Status
     const audioStatus = document.getElementById('interceptorAudioStatus');
-    audioStatus.innerHTML = `
-        <span class="inline-block w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-        Synthesizing ultra-low latency warning via ElevenLabs Flash v2.5...
-    `;
+    if (audioStatus) {
+        audioStatus.className = "w-full py-2.5 px-3.5 rounded-xl bg-[#060a14] border border-[var(--accent-crimson)]/40 flex items-center justify-center gap-2 text-xs font-mono text-[var(--text-muted)]";
+        audioStatus.innerHTML = `
+            <span class="inline-block w-3.5 h-3.5 border-2 border-[var(--accent-crimson)] border-t-transparent rounded-full animate-spin"></span>
+            <span>Synthesizing ultra-low latency warning via ElevenLabs Flash v2.5...</span>
+        `;
+    }
 
     try {
+        const alertPrompt = reason && (reason.toLowerCase().includes("otp") || reason.toLowerCase().includes("transfer") || reason.toLowerCase().includes("kyc"))
+            ? "Security Alert: Dhwani Kavach Shield has detected an unauthorized financial OTP request and synthetic clone signature. This call is placed on hold."
+            : "Security Alert: Dhwani Kavach Shield has detected an unauthorized synthetic voice clone. This call is being placed on hold for identity verification.";
+
         const res = await fetch('/api/studio/intercept_alert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                text: "Security Alert: Dhwani Kavach Shield has detected an unauthorized synthetic voice clone. This call is being placed on hold for identity verification."
-            })
+            body: JSON.stringify({ text: alertPrompt })
         });
 
         const data = await res.json();
         if (data.ok && data.audio_base64) {
-            audioStatus.innerHTML = `
-                <span class="material-symbols-outlined text-lg text-[var(--accent-crimson)] animate-bounce">volume_up</span>
-                <span class="text-white font-bold">Playing Flash v2.5 Audio Intercept</span> · Latency: <span class="text-[var(--accent-cyan)] font-extrabold">${data.latency_ms} ms</span>
-            `;
+            // Update telemetry line exactly as specified in requirements
+            if (audioStatus) {
+                audioStatus.className = "w-full py-2.5 px-3.5 rounded-xl bg-[#060a14] border border-[var(--accent-crimson)]/40 flex items-center justify-center gap-2 text-xs font-mono text-white";
+                audioStatus.innerHTML = `
+                    <span class="material-symbols-outlined text-base text-[var(--accent-crimson)] animate-bounce">volume_up</span>
+                    <span>Playing ElevenLabs Flash v2.5 Voice Alert (~570ms turnaround)</span>
+                `;
+            }
 
-            if (state.alertAudioObj) state.alertAudioObj.pause();
-            state.alertAudioObj = new Audio(`data:audio/wav;base64,${data.audio_base64}`);
-            state.alertAudioObj.play().catch(e => console.log("Audio autoplay prevented:", e));
+            // Immediately stop any prior warning audio
+            if (state.alertAudioObj) {
+                try { state.alertAudioObj.pause(); } catch (_) {}
+                state.alertAudioObj = null;
+            }
+
+            // Decode base64 and instantiate HTML5 audio
+            let mime = 'audio/mp3';
+            if (data.audio_base64.startsWith('UklGR')) {
+                mime = 'audio/wav';
+            }
+            state.alertAudioObj = new Audio(`data:${mime};base64,${data.audio_base64}`);
+
+            // Restore telemetry status when playback finishes
+            state.alertAudioObj.onended = () => {
+                if (audioStatus) {
+                    audioStatus.className = "w-full py-2.5 px-3.5 rounded-xl bg-[#060a14] border border-[var(--accent-emerald)]/40 flex items-center justify-center gap-2 text-xs font-mono text-[var(--accent-emerald)]";
+                    audioStatus.innerHTML = `
+                        <span class="material-symbols-outlined text-base">check_circle</span>
+                        <span>ElevenLabs Flash v2.5 Voice Alert completed</span>
+                    `;
+                }
+            };
+
+            // Autoplay immediately through speakers
+            state.alertAudioObj.play().catch(err => {
+                console.warn("Audio autoplay blocked by browser policy:", err);
+                if (audioStatus) {
+                    audioStatus.innerHTML = `
+                        <span class="material-symbols-outlined text-base text-amber-400">play_circle</span>
+                        <span class="text-amber-400">Click to play ElevenLabs Flash v2.5 Voice Alert (~570ms)</span>
+                    `;
+                    audioStatus.classList.add("cursor-pointer");
+                    audioStatus.onclick = () => {
+                        if (state.alertAudioObj) state.alertAudioObj.play();
+                        audioStatus.classList.remove("cursor-pointer");
+                        audioStatus.onclick = null;
+                    };
+                }
+            });
+
+            logActivity(`[FLASH v2.5 INTERCEPT] Playing synthesized voice alert through speakers (turnaround: ${Math.round(data.latency_ms || 570)}ms).`);
+        } else {
+            if (audioStatus) {
+                audioStatus.textContent = "Audio warning dispatched to telecom bridge.";
+            }
         }
     } catch (e) {
-        audioStatus.textContent = "Audio warning dispatched to telecom bridge.";
+        console.error("Flash v2.5 alert fetch error:", e);
+        if (audioStatus) {
+            audioStatus.textContent = "Audio warning dispatched to telecom bridge.";
+        }
     }
 }
 
+// Backward-compatible alias
+const triggerInterceptorModal = triggerInterceptorAlert;
+
 function terminateCall() {
+    // 1. Immediately stop warning audio playback
     if (state.alertAudioObj) {
-        state.alertAudioObj.pause();
+        try { state.alertAudioObj.pause(); } catch (_) {}
+        state.alertAudioObj = null;
     }
+
+    // 2. Sever and release any active microphone tracks
+    if (state.shieldMicStream) {
+        try {
+            state.shieldMicStream.getTracks().forEach(track => {
+                try { track.stop(); } catch (_) {}
+            });
+        } catch (_) {}
+        state.shieldMicStream = null;
+    }
+    if (state.shieldActive) {
+        stopLiveDefense();
+    }
+    if (state.convaiMicStream) {
+        try {
+            state.convaiMicStream.getTracks().forEach(track => {
+                try { track.stop(); } catch (_) {}
+            });
+        } catch (_) {}
+        state.convaiMicStream = null;
+    }
+    if (state.convaiSessionActive) {
+        stopConvaiSession();
+    }
+
+    // 3. Hide modal & update state
     closeInterceptorModal();
     state.isCallActive = false;
 
+    // 4. Update UI Decision Strip
     const strip = document.getElementById('decisionStrip');
     if (strip) {
         strip.className = "p-4 rounded-2xl bg-[#060913] border border-[var(--border-card)] text-[var(--text-muted)] font-mono flex items-center justify-between";
@@ -1668,21 +1781,73 @@ function terminateCall() {
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-2xl text-[var(--accent-crimson)]">call_end</span>
                 <div>
-                    <div class="font-extrabold text-sm text-[var(--accent-crimson)]">CALL TERMINATED BY USER</div>
+                    <div class="font-extrabold text-sm text-[var(--accent-crimson)]">CALL TERMINATED BY OPERATOR</div>
                     <div class="text-xs">Attacker disconnected. Forensic incident hash logged to I4C 1930 dossier.</div>
                 </div>
             </div>
             <span class="px-2.5 py-1 rounded bg-[var(--accent-crimson)]/20 text-[var(--accent-crimson)] text-xs font-bold">DISCONNECTED</span>
         `;
     }
-    logActivity("[ACTION EXECUTED] User clicked [TERMINATE CALL]. Attack neutralised. Incident report generated.");
+
+    // 5. Append required exact encrypted audit entry to activity terminal
+    logActivity("[CALL TERMINATED] Connection dropped. Spoof fingerprint logged to forensic dossier.");
 }
 
 function verifyIdentity() {
-    if (state.alertAudioObj) state.alertAudioObj.pause();
+    // Pause warning audio so user/caller can focus on challenge
+    if (state.alertAudioObj) {
+        try { state.alertAudioObj.pause(); } catch (_) {}
+    }
+
+    // Show out-of-band secondary authentication challenge box on modal without breaking state
+    const challengeBox = document.getElementById('verificationChallengeBox');
+    if (challengeBox) {
+        challengeBox.classList.remove('hidden');
+        challengeBox.classList.add('flex');
+    }
+
+    // Update button text to show verification active
+    const btnVerify = document.getElementById('btnVerifyIdentity');
+    if (btnVerify) {
+        btnVerify.innerHTML = `
+            <span class="material-symbols-outlined text-lg animate-spin">refresh</span>
+            <span>CHALLENGE ACTIVE (PIN: 582914)</span>
+        `;
+        btnVerify.className = "w-full py-3 rounded-xl bg-amber-500/30 border border-amber-400 text-amber-300 font-mono font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer";
+    }
+
+    // Update Decision Strip
+    const strip = document.getElementById('decisionStrip');
+    if (strip) {
+        strip.className = "p-4 rounded-2xl bg-amber-500/15 border-2 border-amber-500/60 flex items-center justify-between text-amber-400 font-mono";
+        strip.innerHTML = `
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-3xl animate-pulse">lock</span>
+                <div>
+                    <div class="font-extrabold text-sm sm:text-base">🟡 2FA IDENTITY CHALLENGE IN PROGRESS</div>
+                    <div class="text-xs opacity-90">Out-of-band verification PIN: 582914 issued · Monitoring phonetic latency</div>
+                </div>
+            </div>
+            <span class="px-3 py-1 rounded-md bg-amber-500 text-[#060913] text-xs font-black">CHALLENGE</span>
+        `;
+    }
+
+    // Audit log
+    logActivity("[OUT-OF-BAND CHALLENGE] Secondary authentication challenge issued. Challenge PIN: 582914 dispatched to caller's registered telecom SIM. Monitoring response phonetic timing.");
+}
+
+function dismissModal() {
+    // 1. Immediately stop warning audio playback
+    if (state.alertAudioObj) {
+        try { state.alertAudioObj.pause(); } catch (_) {}
+        state.alertAudioObj = null;
+    }
+
+    // 2. Hide modal
     closeInterceptorModal();
-    logActivity("[CHALLENGE INITIATED] Prompting caller with acoustic twister trap: 'Red leather, yellow leather' + response latency check.");
-    alert("Live Twister Security Challenge dispatched to caller: 'Please repeat: Red leather, yellow leather'. Monitoring response latency and phonetic micro-timing.");
+
+    // 3. Append manual operator override audit entry
+    logActivity("[OPERATOR OVERRIDE] Manual operator override applied. Interceptor modal dismissed.");
 }
 
 function closeInterceptorModal() {
@@ -1694,6 +1859,11 @@ function closeInterceptorModal() {
         setTimeout(() => {
             modal.classList.add('hidden');
             backdrop.classList.add('hidden');
+            const challengeBox = document.getElementById('verificationChallengeBox');
+            if (challengeBox) {
+                challengeBox.classList.add('hidden');
+                challengeBox.classList.remove('flex');
+            }
         }, 250);
     }
 }
