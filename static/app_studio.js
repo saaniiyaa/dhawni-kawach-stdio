@@ -328,6 +328,23 @@ async function startConvaiSession(agentId, name, greeting) {
         return;
     }
 
+    // Step 1.0: Initialize AudioContext immediately on direct user gesture
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!state.convaiAudioContext || state.convaiAudioContext.state === 'closed') {
+        state.convaiAudioContext = new AudioContextClass();
+    }
+    const audioCtx = state.convaiAudioContext;
+    state.convaiNextAudioTime = 0;
+    state.convaiScheduledSources = [];
+
+    if (audioCtx.state === 'suspended') {
+        try {
+            await audioCtx.resume();
+        } catch (resumeErr) {
+            console.warn("AudioContext resume on user gesture notice:", resumeErr);
+        }
+    }
+
     // UI state: Connecting
     if (btn) {
         btn.disabled = true;
@@ -337,20 +354,7 @@ async function startConvaiSession(agentId, name, greeting) {
     logActivity(`[SESSION INIT] Starting ConvAI voice session for agent: ${agentId} (${name || 'Agent'})`);
 
     try {
-        // Step 1.a: Fetch active signed conversation URL from backend
-        logActivity(`[SIGNED URL] Requesting signed URL: GET /api/studio/agent/signed_url?agent_id=${encodeURIComponent(agentId)}`);
-        const signedRes = await fetch(`/api/studio/agent/signed_url?agent_id=${encodeURIComponent(agentId)}`);
-        if (!signedRes.ok) {
-            throw new Error(`Backend signed_url endpoint returned HTTP ${signedRes.status}`);
-        }
-        const signedData = await signedRes.json();
-        if (!signedData.ok || !signedData.signed_url) {
-            throw new Error(signedData.error || "Backend failed to return a signed conversation URL");
-        }
-        const signedUrl = signedData.signed_url;
-        logActivity(`[SIGNED URL] URL generated successfully.`);
-
-        // Step 1.b: Request user microphone access
+        // Step 1.a: Request user microphone access (full-duplex, unmuted)
         logActivity("[MIC ACCESS] Requesting microphone permission via getUserMedia...");
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             throw new Error("navigator.mediaDevices.getUserMedia is not supported in this browser context (requires HTTPS or localhost).");
@@ -366,43 +370,61 @@ async function startConvaiSession(agentId, name, greeting) {
                     autoGainControl: true
                 }
             });
-        } catch (micErr) {
-            if (micErr.name === 'NotAllowedError' || micErr.name === 'PermissionDeniedError') {
-                throw new Error("Microphone permission was denied by user or blocked by browser.");
-            } else if (micErr.name === 'NotFoundError' || micErr.name === 'DevicesNotFoundError') {
-                throw new Error("No microphone device found on system.");
-            } else {
-                throw new Error(`Microphone access error: ${micErr.message || micErr.name}`);
+        } catch (e1) {
+            logActivity("[MIC ACCESS] Retrying microphone with fallback constraints { audio: true }...");
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            } catch (micErr) {
+                if (micErr.name === 'NotAllowedError' || micErr.name === 'PermissionDeniedError') {
+                    throw new Error("Microphone permission was denied by user or blocked by browser.");
+                } else if (micErr.name === 'NotFoundError' || micErr.name === 'DevicesNotFoundError') {
+                    throw new Error("No microphone device found on system.");
+                } else {
+                    throw new Error(`Microphone access error: ${micErr.message || micErr.name}`);
+                }
             }
         }
+
+        // Unmute and activate all audio tracks
+        micStream.getAudioTracks().forEach(track => {
+            track.enabled = true;
+        });
         state.convaiMicStream = micStream;
-        logActivity("[MIC ACTIVE] Microphone stream opened successfully (1 channel, 16kHz resampler ready).");
+        logActivity("[MIC ACTIVE] Full-duplex microphone stream opened (16kHz PCM downsampler ready).");
 
-        // Step 1.c: Initialize Web Audio Context and ElevenLabs WebSocket
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContextClass();
-        state.convaiAudioContext = audioCtx;
-        state.convaiNextAudioTime = 0;
-        state.convaiScheduledSources = [];
-
-        if (audioCtx.state === 'suspended') {
-            await audioCtx.resume();
+        // Step 1.b: Fetch active signed conversation URL from backend
+        logActivity(`[SIGNED URL] Requesting signed URL: GET /api/studio/agent/signed_url?agent_id=${encodeURIComponent(agentId)}`);
+        const signedRes = await fetch(`/api/studio/agent/signed_url?agent_id=${encodeURIComponent(agentId)}`);
+        if (!signedRes.ok) {
+            throw new Error(`Backend signed_url endpoint returned HTTP ${signedRes.status}`);
         }
+        const signedData = await signedRes.json();
+        if (!signedData.ok || !signedData.signed_url) {
+            throw new Error(signedData.error || "Backend failed to return a signed conversation URL");
+        }
+        const signedUrl = signedData.signed_url;
+        logActivity(`[SIGNED URL] URL generated successfully.`);
 
+        // Step 1.c: Open secure WebSocket connection to ElevenLabs ConvAI
         logActivity(`[WEBSOCKET] Opening secure WebSocket connection to ElevenLabs ConvAI stream...`);
-        const ws = new WebSocket(signedUrl, ["convai"]);
+        const ws = new WebSocket(signedUrl);
         state.convaiWs = ws;
 
-        ws.onopen = () => {
+        ws.onopen = async () => {
             state.convaiSessionActive = true;
             logActivity("[WEBSOCKET CONNECTED] ElevenLabs ConvAI WebSocket open. Sending handshake client data...");
+
+            // Ensure AudioContext is running
+            if (audioCtx.state === 'suspended') {
+                try { await audioCtx.resume(); } catch (e) {}
+            }
 
             // Send client initiation handshake
             ws.send(JSON.stringify({
                 type: "conversation_initiation_client_data"
             }));
 
-            // Start streaming microphone PCM to ElevenLabs
+            // Start streaming live microphone PCM to ElevenLabs ConvAI
             startMicStreaming(micStream, audioCtx, ws);
 
             // Step 1.d: Toggle button UI to STOP with pulsing indicator
@@ -431,26 +453,55 @@ async function startConvaiSession(agentId, name, greeting) {
         ws.onmessage = (event) => {
             try {
                 const msg = JSON.parse(event.data);
+                
+                // 1. Session initiation metadata
                 if (msg.type === "conversation_initiation_metadata") {
-                    const convId = msg.conversation_initiation_metadata_event?.conversation_id || "active";
-                    logActivity(`[SESSION METADATA] ConvID: ${convId} | Format: ${msg.conversation_initiation_metadata_event?.agent_output_audio_format || 'pcm_16000'}`);
-                } else if (msg.type === "audio" && msg.audio_event?.audio_base_64) {
-                    playPcmChunk(msg.audio_event.audio_base_64, audioCtx);
-                } else if (msg.type === "agent_response" && msg.agent_response_event?.agent_response) {
-                    logActivity(`[AGENT]: "${msg.agent_response_event.agent_response}"`);
-                } else if (msg.type === "user_transcript" && msg.user_transcription_event?.user_transcript) {
-                    logActivity(`[USER]: "${msg.user_transcription_event.user_transcript}"`);
-                } else if (msg.type === "interruption") {
-                    // Barge-in: user spoke while agent was talking, truncate audio queue
-                    state.convaiScheduledSources.forEach(s => { try { s.stop(); } catch(e) {} });
-                    state.convaiScheduledSources = [];
-                    state.convaiNextAudioTime = audioCtx.currentTime;
+                    const meta = msg.conversation_initiation_metadata_event || {};
+                    const convId = meta.conversation_id || "active";
+                    const format = meta.agent_output_audio_format || 'pcm_16000';
+                    logActivity(`[SESSION METADATA] ConvID: ${convId} | Format: ${format}`);
+                } 
+                // 2. Incoming agent audio
+                else if (msg.type === "audio") {
+                    const audioB64 = msg.audio_event?.audio_base_64 || msg.audio_base_64;
+                    if (audioB64) {
+                        playPcmChunk(audioB64, audioCtx);
+                    }
+                } 
+                // 3. Agent response transcript
+                else if (msg.type === "agent_response") {
+                    const agentText = msg.agent_response_event?.agent_response || msg.agent_response || msg.text;
+                    if (agentText) {
+                        logActivity(`[AGENT]: "${agentText}"`);
+                    }
+                } 
+                // 4. User transcript
+                else if (msg.type === "user_transcript") {
+                    const userText = msg.user_transcription_event?.user_transcript || msg.user_transcript || msg.text;
+                    if (userText) {
+                        logActivity(`[USER]: "${userText}"`);
+                    }
+                } 
+                // 5. Barge-in / interruption: user spoke while agent was talking, truncate audio queue
+                else if (msg.type === "interruption") {
+                    if (state.convaiScheduledSources && state.convaiScheduledSources.length > 0) {
+                        state.convaiScheduledSources.forEach(s => { 
+                            try { s.stop(); } catch(e) {} 
+                        });
+                        state.convaiScheduledSources = [];
+                    }
+                    state.convaiNextAudioTime = audioCtx ? audioCtx.currentTime : 0;
                     logActivity("[BARGE-IN] Interruption detected · Truncated agent speech queue.");
-                } else if (msg.type === "ping" && msg.ping_event?.event_id) {
-                    ws.send(JSON.stringify({
-                        type: "pong",
-                        event_id: msg.ping_event.event_id
-                    }));
+                } 
+                // 6. Ping / Keepalive
+                else if (msg.type === "ping") {
+                    const eventId = msg.ping_event?.event_id || msg.event_id;
+                    if (eventId) {
+                        ws.send(JSON.stringify({
+                            type: "pong",
+                            event_id: eventId
+                        }));
+                    }
                 }
             } catch (err) {
                 console.error("ConvAI message parse error:", err);
@@ -470,7 +521,6 @@ async function startConvaiSession(agentId, name, greeting) {
         };
 
     } catch (err) {
-        // Step 1.e: Display exact error in Session Activity Log instead of failing silently
         logActivity(`[ERROR] Failed to start voice session: ${err.message || err}`);
         stopConvaiSession();
     }
@@ -495,14 +545,17 @@ function stopConvaiSession() {
     if (state.convaiProcessor) {
         try { state.convaiProcessor.disconnect(); } catch (e) {}
         state.convaiProcessor = null;
+        window._convaiProcessor = null;
     }
     if (state.convaiMicSource) {
         try { state.convaiMicSource.disconnect(); } catch (e) {}
         state.convaiMicSource = null;
+        window._convaiMicSource = null;
     }
     if (state.convaiMuteGain) {
         try { state.convaiMuteGain.disconnect(); } catch (e) {}
         state.convaiMuteGain = null;
+        window._convaiMuteGain = null;
     }
 
     // 3. Stop all scheduled audio playback sources
@@ -562,50 +615,78 @@ function stopConvaiSession() {
 
 function startMicStreaming(stream, audioCtx, ws) {
     try {
+        if (!stream || !audioCtx || !ws) return;
+
+        // Ensure all mic tracks are active and unmuted
+        stream.getAudioTracks().forEach(track => {
+            track.enabled = true;
+        });
+
+        // Ensure AudioContext is actively running
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+        }
+
         const source = audioCtx.createMediaStreamSource(stream);
         state.convaiMicSource = source;
+        window._convaiMicSource = source; // Prevent GC
 
-        // ScriptProcessor with bufferSize = 4096 (approx 85-92ms at 44.1/48kHz)
+        // ScriptProcessor with bufferSize = 4096 (~85ms at 48kHz, ~92ms at 44.1kHz)
         const processor = audioCtx.createScriptProcessor(4096, 1, 1);
         state.convaiProcessor = processor;
+        window._convaiProcessor = processor; // Prevent GC
 
         const inputSampleRate = audioCtx.sampleRate;
         const targetSampleRate = 16000;
+        let packetsSent = 0;
 
         processor.onaudioprocess = (e) => {
             if (!state.convaiSessionActive || !ws || ws.readyState !== WebSocket.OPEN) return;
+
             const inputData = e.inputBuffer.getChannelData(0);
 
-            // Resample down to 16,000 Hz if needed
+            // Zero out output buffer so mic is never echoed to speakers
+            const outputData = e.outputBuffer.getChannelData(0);
+            outputData.fill(0);
+
+            // 16kHz Downsampling: Resample browser audio to exactly 16,000 Hz
             const downsampled = resampleAudio(inputData, inputSampleRate, targetSampleRate);
 
-            // Convert Float32 [-1.0, 1.0] to 16-bit linear PCM
+            // Convert Float32 samples (-1.0 to 1.0) into Signed 16-bit Int16 PCM (-32768 to 32767)
             const pcm16 = new Int16Array(downsampled.length);
             for (let i = 0; i < downsampled.length; i++) {
                 const s = Math.max(-1, Math.min(1, downsampled[i]));
                 pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
             }
 
-            // Encode to Base64 in safe chunks
-            const uint8 = new Uint8Array(pcm16.buffer);
+            // Convert Int16 buffer to byte array and encode to Base64 in safe chunks
+            const bytes = new Uint8Array(pcm16.buffer, pcm16.byteOffset, pcm16.byteLength);
             let binary = '';
-            const chunkSize = 8192;
-            for (let i = 0; i < uint8.length; i += chunkSize) {
-                binary += String.fromCharCode.apply(null, uint8.subarray(i, i + chunkSize));
+            const chunkSize = 2048;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+                const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+                binary += String.fromCharCode.apply(null, chunk);
             }
             const base64Chunk = btoa(binary);
 
-            // Transmit user audio chunk to ElevenLabs
+            // Base64 encode and transmit strictly structured as JSON
             ws.send(JSON.stringify({
                 user_audio_chunk: base64Chunk
             }));
+
+            packetsSent++;
+            if (packetsSent === 1) {
+                logActivity("[UPLINK STREAMING] Live microphone PCM (16kHz pcm_16000) streaming to ConvAI WebSocket.");
+            }
         };
 
         // Mute local feedback gain to avoid echoing user's mic into local speakers
         const muteGain = audioCtx.createGain();
         muteGain.gain.value = 0.0;
         state.convaiMuteGain = muteGain;
+        window._convaiMuteGain = muteGain; // Prevent GC
 
+        // Connect the Web Audio graph: source -> processor -> muteGain -> destination
         source.connect(processor);
         processor.connect(muteGain);
         muteGain.connect(audioCtx.destination);
@@ -633,19 +714,22 @@ function resampleAudio(input, fromRate, toRate) {
 
 function playPcmChunk(base64Audio, audioCtx) {
     if (!audioCtx || audioCtx.state === 'closed') return;
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+    }
 
     try {
         const binary = atob(base64Audio);
         const len = binary.length;
+        const numSamples = Math.floor(len / 2);
+        if (numSamples === 0) return;
+
         const bytes = new Uint8Array(len);
         for (let i = 0; i < len; i++) {
             bytes[i] = binary.charCodeAt(i);
         }
 
-        const int16Samples = new Int16Array(bytes.buffer);
-        const numSamples = int16Samples.length;
-        if (numSamples === 0) return;
-
+        const int16Samples = new Int16Array(bytes.buffer, 0, numSamples);
         const float32Samples = new Float32Array(numSamples);
         for (let i = 0; i < numSamples; i++) {
             float32Samples[i] = int16Samples[i] / 32768.0;
@@ -680,10 +764,34 @@ function logActivity(msg) {
         const time = new Date().toLocaleTimeString();
         const line = document.createElement('div');
         line.className = "text-xs font-mono leading-relaxed";
-        line.innerHTML = `<span class="text-[var(--text-muted)]">[${time}]</span> <span class="text-[var(--accent-cyan)]">${msg}</span>`;
+        
+        let coloredMsg = msg;
+        if (msg.startsWith('[USER]:')) {
+            coloredMsg = `<span class="text-[var(--accent-emerald)] font-bold">${escapeHtml(msg)}</span>`;
+        } else if (msg.startsWith('[AGENT]:')) {
+            coloredMsg = `<span class="text-[var(--accent-cyan)] font-bold">${escapeHtml(msg)}</span>`;
+        } else if (msg.startsWith('[BARGE-IN]')) {
+            coloredMsg = `<span class="text-[var(--accent-amber)] font-bold">${escapeHtml(msg)}</span>`;
+        } else if (msg.startsWith('[ERROR]')) {
+            coloredMsg = `<span class="text-[var(--accent-crimson)] font-bold">${escapeHtml(msg)}</span>`;
+        } else if (msg.startsWith('[UPLINK STREAMING]')) {
+            coloredMsg = `<span class="text-[var(--accent-emerald)] font-semibold">${escapeHtml(msg)}</span>`;
+        } else {
+            coloredMsg = `<span class="text-[var(--accent-cyan)]">${escapeHtml(msg)}</span>`;
+        }
+
+        line.innerHTML = `<span class="text-[var(--text-muted)]">[${time}]</span> ${coloredMsg}`;
         term.appendChild(line);
         term.scrollTop = term.scrollHeight;
     }
+}
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
 
 // ── 3. LIVE CALL DEFENSE SHIELD & INTERCEPTOR (PPT SLIDE 4 & 7) ───────────────
@@ -697,14 +805,15 @@ function initVisualizer() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         ctx.lineWidth = 2.5;
-        ctx.strokeStyle = state.isCallActive ? '#00F0FF' : 'rgba(148, 163, 184, 0.3)';
+        const isAnyActive = state.isCallActive || state.convaiSessionActive;
+        ctx.strokeStyle = isAnyActive ? '#00F0FF' : 'rgba(148, 163, 184, 0.3)';
         ctx.beginPath();
 
         const width = canvas.width;
         const height = canvas.height;
         const mid = height / 2;
-        const freq = state.isCallActive ? 0.05 : 0.015;
-        const amp = state.isCallActive ? 22 : 4;
+        const freq = (state.isCallActive || state.convaiSessionActive) ? 0.05 : 0.015;
+        const amp = (state.isCallActive || state.convaiSessionActive) ? 22 : 4;
 
         for (let x = 0; x < width; x++) {
             const y = mid + Math.sin(x * freq + phase) * amp * Math.sin(x * 0.01);
@@ -713,7 +822,7 @@ function initVisualizer() {
         }
         ctx.stroke();
 
-        phase += state.isCallActive ? 0.08 : 0.02;
+        phase += (state.isCallActive || state.convaiSessionActive) ? 0.08 : 0.02;
         state.canvasAnimationId = requestAnimationFrame(renderWave);
     }
     renderWave();
