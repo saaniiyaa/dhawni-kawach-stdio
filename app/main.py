@@ -208,20 +208,26 @@ async def studio_armoriq_verify(request: Request):
 # ── HTML PAGES & STATIC FILES ────────────────────────────────────────────────
 # ═════════════════════════════════════════════════════════════════════════════
 
+NO_CACHE_HEADERS = {
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
+}
+
 @app.get("/")
 def get_root():
     if os.path.exists("static/studio.html"):
-        return FileResponse("static/studio.html")
-    return FileResponse("static/index.html")
+        return FileResponse("static/studio.html", headers=NO_CACHE_HEADERS)
+    return FileResponse("static/index.html", headers=NO_CACHE_HEADERS)
 
 @app.get("/studio")
 @app.get("/studio.html")
 def get_studio():
-    return FileResponse("static/studio.html")
+    return FileResponse("static/studio.html", headers=NO_CACHE_HEADERS)
 
 @app.get("/telephony")
 def get_telephony():
-    return FileResponse("static/index.html")
+    return FileResponse("static/index.html", headers=NO_CACHE_HEADERS)
 
 # Static assets
 if os.path.exists("static"):

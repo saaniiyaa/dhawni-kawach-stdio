@@ -9,7 +9,7 @@ import json
 import tempfile
 
 try:
-    from flask import Flask, request, jsonify, send_file
+    from flask import Flask, request, jsonify, send_file, make_response
 except ImportError:
     print("flask is not installed. Run 0c_install_flask.py once, then run this.")
     raise SystemExit(0)
@@ -153,19 +153,27 @@ def decode_to_wav(raw_bytes, suffix):
     return load(out)
 
 
+def _serve_no_cache(filename):
+    resp = make_response(send_file(filename))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
+
 @app.route("/")
 def index():
-    return send_file("static/studio.html") if os.path.exists("static/studio.html") else send_file("static/index.html")
+    target = "static/studio.html" if os.path.exists("static/studio.html") else "static/index.html"
+    return _serve_no_cache(target)
 
 
 @app.route("/studio")
 def studio():
-    return send_file("static/studio.html")
+    return _serve_no_cache("static/studio.html")
 
 
 @app.route("/telephony")
 def telephony():
-    return send_file("static/index.html")
+    return _serve_no_cache("static/index.html")
 
 
 @app.route("/api/reset", methods=["POST"])

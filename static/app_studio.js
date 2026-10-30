@@ -329,13 +329,13 @@ function renderDeployedAgent(data) {
     const widgetBox = document.getElementById('convaiWidgetContainer');
     if (widgetBox) {
         widgetBox.innerHTML = `
-            <div class="flex flex-col items-center justify-center p-6 border border-[var(--accent-cyan)]/30 rounded-2xl bg-[#060913]/80 gap-3 text-center">
-                <div id="convaiStatusIcon" class="w-12 h-12 rounded-full bg-[var(--accent-cyan)]/15 border border-[var(--accent-cyan)] flex items-center justify-center text-[var(--accent-cyan)] transition-all">
+            <div class="flex flex-col items-center justify-center p-6 border border-white/10 rounded-2xl glass-card-sub gap-3.5 text-center">
+                <div id="convaiStatusIcon" class="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400 transition-all">
                     <span class="material-symbols-outlined text-3xl">mic</span>
                 </div>
-                <div id="convaiSessionTitle" class="text-sm font-mono font-bold text-[var(--text-primary)]">ElevenLabs ConvAI Session Ready</div>
-                <div id="convaiSessionDesc" class="text-xs font-mono text-[var(--text-muted)] text-center max-w-sm">Agent is active with live speech capabilities. Click below to start real-time microphone stream.</div>
-                <button id="btnStartTalkSession" type="button" class="px-5 py-2.5 rounded-xl bg-[var(--accent-cyan)] text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 hover:bg-white transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] cursor-pointer">
+                <div id="convaiSessionTitle" class="text-sm font-sans font-semibold text-white">ElevenLabs ConvAI Session Ready</div>
+                <div id="convaiSessionDesc" class="text-xs font-sans text-slate-400 text-center max-w-sm leading-relaxed">Agent is active with live speech capabilities. Click below to start real-time microphone stream.</div>
+                <button id="btnStartTalkSession" type="button" class="px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-400 hover:to-teal-300 text-slate-950 font-sans font-bold text-xs tracking-wide flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer">
                     <span class="material-symbols-outlined text-lg">support_agent</span>
                     <span id="btnStartTalkSessionText">START CONVAI VOICE SESSION</span>
                 </button>
@@ -405,7 +405,7 @@ async function startConvaiSession(agentId, name, greeting) {
     // UI state: Connecting
     if (btn) {
         btn.disabled = true;
-        btn.className = "px-5 py-2.5 rounded-xl bg-[var(--accent-cyan)]/70 text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 cursor-wait";
+        btn.className = "px-6 py-3 rounded-xl bg-slate-800 text-slate-300 font-sans font-medium text-xs tracking-wide cursor-wait border border-white/10 flex items-center justify-center gap-2";
         if (btnText) btnText.textContent = "CONNECTING CONVAI...";
     }
     logActivity(`[SESSION INIT] Starting ConvAI voice session for agent: ${agentId} (${name || 'Agent'})`);
@@ -487,21 +487,21 @@ async function startConvaiSession(agentId, name, greeting) {
             // Step 1.d: Toggle button UI to STOP with pulsing indicator
             if (btn) {
                 btn.disabled = false;
-                btn.className = "px-5 py-2.5 rounded-xl bg-[var(--accent-crimson)] hover:bg-red-600 text-white font-mono font-extrabold text-xs flex items-center gap-2 transition-all shadow-[0_0_20px_rgba(239,68,68,0.6)] cursor-pointer animate-pulse";
+                btn.className = "px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-400 hover:to-red-500 text-white font-sans font-bold text-xs tracking-wider flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98] cursor-pointer animate-pulse";
                 btn.innerHTML = `
                     <span class="material-symbols-outlined text-lg">stop_circle</span>
-                    <span id="btnStartTalkSessionText">⏹ STOP VOICE SESSION</span>
+                    <span id="btnStartTalkSessionText">STOP VOICE SESSION</span>
                 `;
             }
 
             if (icon) {
-                icon.className = "w-12 h-12 rounded-full bg-[var(--accent-crimson)]/20 border border-[var(--accent-crimson)] flex items-center justify-center text-[var(--accent-crimson)] animate-bounce";
+                icon.className = "w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 animate-pulse";
             }
             if (title) {
-                title.textContent = "🎙️ Live ConvAI Voice Session Active";
+                title.textContent = "Live Voice Session Active";
             }
             if (desc) {
-                desc.textContent = "Microphone is streaming live to ElevenLabs. Speak naturally — agent responds in real time.";
+                desc.textContent = "Microphone is streaming live to ElevenLabs ConvAI. Speak naturally — your agent responds in real time.";
             }
 
             logActivity("[LIVE SESSION ACTIVE] Full duplex voice conversation established. Speak into your microphone!");
@@ -651,14 +651,14 @@ function stopConvaiSession() {
 
     if (btn) {
         btn.disabled = false;
-        btn.className = "px-5 py-2.5 rounded-xl bg-[var(--accent-cyan)] text-[#060913] font-mono font-extrabold text-xs flex items-center gap-2 hover:bg-white transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)] cursor-pointer";
+        btn.className = "px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-teal-400 hover:from-sky-400 hover:to-teal-300 text-slate-950 font-sans font-bold text-xs tracking-wide flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer";
         btn.innerHTML = `
             <span class="material-symbols-outlined text-lg">support_agent</span>
             <span id="btnStartTalkSessionText">START CONVAI VOICE SESSION</span>
         `;
     }
     if (icon) {
-        icon.className = "w-12 h-12 rounded-full bg-[var(--accent-cyan)]/15 border border-[var(--accent-cyan)] flex items-center justify-center text-[var(--accent-cyan)]";
+        icon.className = "w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400";
     }
     if (title) {
         title.textContent = "ElevenLabs ConvAI Session Ready";
