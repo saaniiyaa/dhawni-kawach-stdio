@@ -480,10 +480,19 @@ def studio_armoriq_verify():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+# Production ASGI Export for direct Uvicorn/Render invocation
+try:
+    from app.main import app as asgi_app
+except ImportError:
+    asgi_app = app
+
 if __name__ == "__main__":
     import socket
+    port = int(os.environ.get("PORT", 8000))
+    host = os.environ.get("HOST", "0.0.0.0")
     try:
         _s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        _s.settimeout(0.5)
         _s.connect(("8.8.8.8", 80))
         _lan_ip = _s.getsockname()[0]
         _s.close()
@@ -491,12 +500,12 @@ if __name__ == "__main__":
         _lan_ip = "(run ipconfig to find it)"
     print()
     print("DHWANI-KAVACH demo v2. Open in your browser (Chrome recommended):")
-    print("       http://127.0.0.1:8000")
-    print(f"phones on the same Wi-Fi:  http://{_lan_ip}:8000")
+    print(f"       http://127.0.0.1:{port}")
+    print(f"phones on the same Wi-Fi:  http://{_lan_ip}:{port}")
     try:
         import uvicorn
-        print("[OK] Launching ASGI Uvicorn server for native WebSockets & Edge NPU stream.")
-        uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=False)
+        print(f"[OK] Launching ASGI Uvicorn server on {host}:{port} for native WebSockets & Edge NPU stream.")
+        uvicorn.run("app.main:app", host=host, port=port, reload=False)
     except Exception as _uv_err:
         print(f"[WARN] Uvicorn fallback to WSGI: {_uv_err}")
-        app.run(host="0.0.0.0", port=8000, debug=False)
+        app.run(host=host, port=port, debug=False)

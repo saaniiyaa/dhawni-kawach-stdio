@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: dhwani-kavach-studio
+    runtime: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --ws websockets"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ARMORIQ_POLICY_THRESHOLD
+        value: "0.75"
+      - key: HOST
+        value: "0.0.0.0"
+    healthCheckPath: /health
