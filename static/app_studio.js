@@ -54,6 +54,21 @@ const state = {
     armoriqPolicyThreshold: 0.75
 };
 
+// ── SSL & Dynamic WebSocket Resolution (Cloud HTTPS/WSS Hardening) ───────────
+function getResolvedWsUrl(pathOrUrl = "/ws") {
+    if (typeof pathOrUrl === 'string' && (pathOrUrl.startsWith('ws://') || pathOrUrl.startsWith('wss://'))) {
+        // Upgrade insecure ws:// to wss:// if hosted over HTTPS
+        if (window.location.protocol === 'https:' && pathOrUrl.startsWith('ws://')) {
+            return pathOrUrl.replace(/^ws:\/\//, 'wss://');
+        }
+        return pathOrUrl;
+    }
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const cleanPath = (typeof pathOrUrl === 'string' && pathOrUrl.startsWith('/')) ? pathOrUrl : `/${pathOrUrl || 'ws'}`;
+    return `${wsProtocol}//${window.location.host}${cleanPath}`;
+}
+
+
 // ── ArmorIQ Intent Assurance Cryptographic Helpers ───────────────────────────
 function generateArmorIqIntentId() {
     const chars = "0123456789ABCDEF";
@@ -459,7 +474,7 @@ async function startConvaiSession(agentId, name, greeting) {
         if (!signedData.ok || !signedData.signed_url) {
             throw new Error(signedData.error || "Backend failed to return a signed conversation URL");
         }
-        const signedUrl = signedData.signed_url;
+        const signedUrl = getResolvedWsUrl(signedData.signed_url);
         logActivity(`[SIGNED URL] URL generated successfully.`);
 
         // Step 1.c: Open secure WebSocket connection to ElevenLabs ConvAI
